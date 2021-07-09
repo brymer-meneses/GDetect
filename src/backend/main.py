@@ -1,13 +1,17 @@
 
-from flask import Flask
+# For image types
+import uvicorn
+from fastapi import FastAPI
+app = FastAPI()
 
-app = Flask(__name__)
-
-@app.route("/")
+@app.get("/")
 def index():
-    return 'Hello World'
+    return {"message", "This is the GDetect API"}
+
+@app.post("/predict/image_edit")
+def predict_image_edit():
+    return {"prediction", "TODO"}
 
 if __name__ == "__main__":
-    app.run()
-
+    uvicorn.run(app, host='127.0.0.1', port=8000)
 

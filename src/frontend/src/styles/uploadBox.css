@@ -1,0 +1,35 @@
+
+
+.upload-box {
+    border: 2px #1890ff;
+    border-style: dashed;
+    position: relative;
+    background: #e6f7ff;
+    height: 50vh;
+    width: 50vh;
+    cursor: pointer;
+}
+
+.upload-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 1vh;
+}
+
+.upload-box > img {
+    width: 90%;
+    height: 90%; 
+    object-fit: contain;
+}
+
+.upload-box-contents {
+    display: flex;
+    flex-direction: column;
+}
+
+input {
+    display: hidden;
+}
+

@@ -1,13 +1,13 @@
-
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-
 from pydantic import BaseModel
+
+from typing import List
+
+from starlette.responses import JSONResponse
 
 app = FastAPI()
 
-# TODO
-# Make "origins" more specific by only allowing certain links
 origins = ["*"]
 
 app.add_middleware(
@@ -21,27 +21,35 @@ app.add_middleware(
 from cv2 import cv2
 import numpy as np
 
+
 @app.get("/")
 async def index():
     return {"message", "This is the GDetect API"}
 
+
 class UploadResponse(BaseModel):
-    filename: str
-    dimensions: str
+    filenames: str
+    # dimensions: str
 
 
-@app.post("/api/upload-selfie", response_model=UploadResponse)
-async def predict_image_edit(image: UploadFile = File(...)):
-    contents = await image.read()
-    nparr = np.fromstring(contents, np.uint8)
-    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    img_dimensions = str(img.shape)
-    
+from utils import read_image, is_filetype_valid
+
+
+@app.post("/api/upload-images")
+async def process_images(files: List[UploadFile] = File(...)):
+    """ This function will run the core GDetect algorithm """
+
+    print("received images")
+    # images = []
+    # for image in files:
+    #     if is_filetype_valid(image.filename):
+    #         return JSONResponse(
+    #             status_code=404, content="Invalid Filetype expected (jpeg, jpg, png)"
+    #         )
+    #     images.append(read_image(await image.read()))
+
+    # selfie_img, id_img = images
+
     return {
-        "filename": image.filename,
-        "dimensions": img_dimensions
+        "filenames": [image.filename for image in files],
     }
-    
-    
-
-

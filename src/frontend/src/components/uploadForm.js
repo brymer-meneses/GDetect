@@ -2,9 +2,13 @@ import UploadBox from './uploadBox';
 import '../styles/uploadForm.css';
 import { useState } from 'react';
 import axios from 'axios';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 
 const API_LINK = 'http://127.0.0.1:8000/api/upload-images';
+
+// TODO
+// - Make the UI responsive
+// - Add Steps
 
 function UploadForm() {
   const [selfieImage, setSelfieImage] = useState(null);
@@ -26,12 +30,28 @@ function UploadForm() {
     formData.append('files', selfieImage);
     formData.append('files', idImage);
 
+    const key = 'updatable';
+    message.loading({ content: 'Uploading Images...', key });
     axios
       .post(API_LINK, formData)
       .then((res) => {
+        setTimeout(() => {
+          message.success({
+            content: 'Images have been uploaded',
+            key,
+            duration: 1,
+          });
+        }, 1000);
         console.log(res);
       })
       .catch((error) => {
+        setTimeout(() => {
+          message.error({
+            content: 'Failed to upload images',
+            key,
+            duration: 1,
+          });
+        }, 1000);
         console.log(error);
       });
   };

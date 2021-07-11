@@ -1,8 +1,10 @@
 import UploadBox from './uploadBox';
-import '../styles/uploadForm.css';
-import { useState } from 'react';
 import axios from 'axios';
+import { useState } from 'react';
+
 import { Button, message } from 'antd';
+import '../styles/uploadForm.css';
+import messageHandler from './message';
 
 const API_LINK = 'http://127.0.0.1:8000/api/upload-images';
 
@@ -35,24 +37,14 @@ function UploadForm() {
     axios
       .post(API_LINK, formData)
       .then((res) => {
-        setTimeout(() => {
-          message.success({
-            content: 'Images have been uploaded',
-            key,
-            duration: 1,
-          });
-        }, 1000);
-        console.log(res);
+        messageHandler(res, key);
       })
-      .catch((error) => {
-        setTimeout(() => {
-          message.error({
-            content: 'Failed to upload images',
-            key,
-            duration: 1,
-          });
-        }, 1000);
-        console.log(error);
+      .catch((err) => {
+        if (err.response !== null) {
+          messageHandler(err.response, key);
+        } else {
+          console.log(err);
+        }
       });
   };
 

@@ -5,8 +5,10 @@
     border-style: dashed;
     position: relative;
     background: #e6f7ff;
-    height: 50vh;
-    width: 50vh;
+    height: 40vw;
+    width: 40vw;
+    max-height: 70vh;
+    max-width: 70vh;
     cursor: pointer;
 }
 
@@ -31,5 +33,12 @@
 
 input {
     display: hidden;
+}
+
+@media screen and (max-width: 480px) {
+    .upload-box {
+        height: 60vw;
+        width: 60vw;
+    }
 }
 

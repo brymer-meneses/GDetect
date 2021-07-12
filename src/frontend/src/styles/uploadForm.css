@@ -8,5 +8,18 @@
     margin: 1rem;
 }
 
+.upload-button {
+    margin: 1em;
+}
+
+.text-container {
+    margin: 1em 0 0 0;
+}
 
 
+@media screen and (min-width: 480px) {
+    .upload-container {
+        display: flex;
+        flex-direction: row;
+    }
+}

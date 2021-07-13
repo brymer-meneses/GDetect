@@ -1,4 +1,6 @@
+import { PageHeader } from 'antd';
+
 function Header() {
-  return <></>;
+  return <PageHeader title="GCash" subTitle="Verify your account" />;
 }
 export default Header;

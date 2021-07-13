@@ -1,13 +1,19 @@
 import numpy as np
 from deepface import DeepFace
 
+import sys
+
+
+from utils import read_image_cv2
 
 MODELS = ["VGG-Face", "Facenet", "OpenFace", "DeepFace", "DeepID", "ArcFace", "Dlib"]
 DATABASE = r"database"
 
 
-def compute_facial_similarity(img1: np.ndarray, img2: np.ndarray):
+def compute_facial_similarity(img1: bytes, img2: bytes):
     """ Computes the facial similarity between two images """
+
+    img1, img2 = read_image_cv2(img1), read_image_cv2(img2)
 
     result = DeepFace.verify(img1, img2, model_name=MODELS[1])
     return result["distance"]

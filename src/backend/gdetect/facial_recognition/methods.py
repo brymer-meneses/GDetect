@@ -3,10 +3,15 @@ import numpy as np
 from mtcnn import MTCNN
 from starlette.responses import JSONResponse
 
+import sys
+
+sys.path.append("..")
+from utils import read_image_cv2
+
 detector = MTCNN()
 
 
-def validate_faces(imgs: List[np.ndarray]) -> bool:
+def validate_faces(imgs: List[bytes]) -> bool:
     """
     Calculate the number of faces that the
     user sent to the system
@@ -14,6 +19,7 @@ def validate_faces(imgs: List[np.ndarray]) -> bool:
 
     number_of_faces = 0
     for img in imgs:
+        img = read_image_cv2(img)
         faces = detector.detect_faces(img)
         number_of_faces += len(faces)
 
@@ -25,7 +31,8 @@ def validate_faces(imgs: List[np.ndarray]) -> bool:
 
 def crop_faces(img: np.ndarray) -> Tuple[int, List[np.ndarray]]:
     """
-    Detects and crops the face/s that exist/s in the input image.
+    Detects and crops the face/s that exist/s in the input
+    image.
     """
 
     # Detect the faces in an image

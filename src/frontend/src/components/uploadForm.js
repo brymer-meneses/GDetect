@@ -47,9 +47,10 @@ function UploadForm() {
   const fileUploadHandler = () => {
     const formData = new FormData();
     // The selfie image is sent before the id image
-    formData.append('files', selfieImage);
-    formData.append('files', idImage);
-    formData.append('userInfo', { fullName, email });
+    formData.append('selfie_image', selfieImage);
+    formData.append('id_image', idImage);
+    formData.append('full_name', fullName);
+    formData.append('email_address', email);
     setIsUploading(true);
 
     const key = 'updatable';

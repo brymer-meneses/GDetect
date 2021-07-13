@@ -21,9 +21,10 @@ function Content() {
 
   const fileUploadHandler = () => {
     const formData = new FormData();
-    // The selfie image is sent before the id image
     formData.append('selfie_image', selfieImage);
     formData.append('id_image', idImage);
+    formData.append('full_name', credentials.fullName);
+    formData.append('email_address', credentials.email);
 
     const key = 'updatable';
     message.loading({ content: 'Uploading Images...', key });

@@ -8,7 +8,8 @@ import axios from 'axios';
 import { message } from 'antd';
 import messageHandler from './message';
 
-const API_LINK = 'http://127.0.0.1:8000/api/upload-images';
+const API_LINK = 'http://127.0.0.1:8000/api/upload';
+const STATUS_LINK = 'http://127.0.0.1:8000/api/status';
 
 function Content() {
   const [credentials, setCredentials] = useState({
@@ -18,6 +19,45 @@ function Content() {
 
   const [selfieImage, setSelfieImage] = useState(null);
   const [idImage, setIdImage] = useState(null);
+  const [proceedToUpload, setProceedToUpload] = useState(false);
+
+  const checkVerificationStatus = (email) => {
+    const formData = new FormData();
+    const key = 'status';
+    message.loading({ content: 'Please wait...', key });
+    formData.append('email_address', email);
+    axios
+      .post(STATUS_LINK, formData)
+      .then((res) => {
+        try {
+          switch (res.status) {
+            case 202:
+              message.success({ content: 'Success', key });
+              setProceedToUpload(true);
+              break;
+            case 201:
+              message.success({ content: 'User has been verified', key });
+              break;
+            case 208:
+              message.error({
+                content: 'The verification is currently being processed.',
+                key,
+              });
+              console.log('hello 208');
+              break;
+          }
+        } catch (error) {
+          message.error({ content: 'Request Timed Out', key: key });
+        }
+      })
+      .catch((err) => {
+        try {
+          message.error(err.response, key);
+        } catch (error) {
+          message.error({ content: 'Upload Failed', key });
+        }
+      });
+  };
 
   const fileUploadHandler = () => {
     const formData = new FormData();
@@ -46,11 +86,9 @@ function Content() {
       });
   };
 
-  const isLoggedIn =
-    credentials.email !== null && credentials.fullName !== null;
   return (
     <>
-      {isLoggedIn ? (
+      {proceedToUpload ? (
         <UploadForm
           selfieHandler={setSelfieImage}
           idHandler={setIdImage}
@@ -59,7 +97,10 @@ function Content() {
           fileUploadHandler={fileUploadHandler}
         />
       ) : (
-        <Login handler={setCredentials} />
+        <Login
+          handler={setCredentials}
+          handleStatus={checkVerificationStatus}
+        />
       )}
     </>
   );

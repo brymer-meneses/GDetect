@@ -1,10 +1,8 @@
-from fastapi import FastAPI, File, UploadFile, Form
+from fastapi import FastAPI, File, UploadFile, Form, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
-
-# from pydantic import BaseModel
-
-# from typing import List
 from starlette.responses import JSONResponse
+
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -18,19 +16,51 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-@app.get("/")
-async def index():
-    return {"message", "This is the GDetect API"}
-
-
-from gdetect.facial_recognition import validate_faces, compute_facial_similarity
-from gdetect.id_verification import verify_text
+# from methods.facial_recognition import validate_faces, compute_facial_similarity
+# from methods.id_verification import verify_text
 from utils import is_filetype_valid
+from utils import Queue
+
+queue = Queue()
 
 
-@app.post("/api/upload-images")
-async def process_images(
+def process_information(
+    selfie_image: bytes,
+    id_image: bytes,
+    full_name: str,
+    email_address: str,
+) -> bool:
+    queue.add_to_queue(email_address)
+
+    return True
+
+
+@app.post("/api/status")
+async def get_status(email_address: str = Form(...)) -> JSONResponse:
+
+    if queue.is_finished(email_address):
+        # print(f"{email_address} is finished")
+        return JSONResponse(
+            status_code=201, content="User has been verified! Congratulations!"
+        )
+    else:
+        if queue.is_processing(email_address):
+            # print(f"{email_address} is being processed")
+            return JSONResponse(
+                status_code=208,
+                content="User Verification is currently being processed",
+            )
+        else:
+            # print(f"{email_address} is NOT being processed")
+
+            return JSONResponse(
+                status_code=202, content="User Verification is not being processed"
+            )
+
+
+@app.post("/api/upload")
+async def receive_information(
+    background_tasks: BackgroundTasks,
     selfie_image: UploadFile = File(...),
     id_image: UploadFile = File(...),
     full_name: str = Form(...),
@@ -41,35 +71,12 @@ async def process_images(
     selfie_image_file = await selfie_image.read()
     id_image_file = await id_image.read()
 
-    ### 1. Validate file being passed to the api,
-    ###    returns status code 500 if it isn't
+    for image in [selfie_image, id_image]:
+        if not is_filetype_valid(image.filename):
+            return JSONResponse(status_code=400, content="Invalid Image Filetype")
 
-    if not is_filetype_valid(selfie_image.filename):
-        return JSONResponse(status_code=500, content="incorrect filetype passed")
+    background_tasks.add_task(
+        process_information, selfie_image_file, id_image_file, full_name, email_address
+    )
 
-    if not is_filetype_valid(id_image.filename):
-        return JSONResponse(status_code=500, content="incorrect filetype passed")
-
-    ### 2. Detects texts in the id image and see if it matches
-    ###    to the "full_name" given by the user
-
-    if verify_text(full_name, id_image_file):
-        return JSONResponse(
-            status_code=500, content="Image Error. Please retake your images."
-        )
-
-    ### 3. Attempt to detect faces in the uploaded images
-    ###    return error otherwise
-
-    if not validate_faces([selfie_image_file, id_image_file]):  # type : ignore
-        return JSONResponse(
-            status_code=500, content="Image Error. Please retake your images."
-        )
-
-    ### 4. Computes the facial similarity of the faces in
-    ###    the selfie image and the id image
-
-    if compute_facial_similarity(id_image_file, selfie_image_file) > 0.40:  # type: ignore
-        return JSONResponse(status_code=500, content="Verification Failed")
-    else:
-        return JSONResponse(status_code=200, content="Verification Success")
+    return {"message", "received information"}

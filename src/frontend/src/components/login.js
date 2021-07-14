@@ -5,6 +5,7 @@ import TextInput from './textInput';
 import '../styles/login.css';
 
 import { useState } from 'react';
+import axios from 'axios';
 
 const { Text } = Typography;
 
@@ -14,6 +15,7 @@ function Login(props) {
 
   const handleSubmit = () => {
     props.handler({ email: email, fullName: fullName });
+    props.handleStatus(email);
   };
 
   return (

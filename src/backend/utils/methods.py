@@ -39,3 +39,31 @@ def read_image_cv2(data) -> np.ndarray:
     frame = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
     cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     return frame
+
+
+class Queue:
+    def __init__(self) -> None:
+        self._processing = []
+        self._finished = []
+        return
+
+    def remove_from_queue(self, email: str) -> None:
+        self._processing.remove(email)
+        self._finished.append(email)
+        return
+
+    def is_processing(self, email: str) -> bool:
+        if email in self._processing:
+            return True
+        else:
+            return False
+
+    def is_finished(self, email: str) -> bool:
+        if email in self._finished:
+            return True
+        else:
+            return False
+
+    def add_to_queue(self, email: str) -> None:
+        self._processing.append(email)
+        return

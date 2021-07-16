@@ -9,7 +9,6 @@
     width: 40vw;
     max-height: 40vh;
     max-width: 40vh;
-    cursor: pointer;
 }
 
 .upload-box {
@@ -27,6 +26,16 @@
     object-fit: contain;
 }
 
+.delete-button {
+    position: absolute;
+    top: 2%;
+    right: 2%;
+    color: #ff4d4f;
+    font-size: 2rem;
+    cursor: pointer;
+    text-shadow: 1px -1px 1px #595959;
+}
+/* <i class="fas fa-window-close"></i> */
 
 .upload-box-contents {
     display: flex;

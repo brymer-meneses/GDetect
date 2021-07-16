@@ -8,6 +8,8 @@ import axios from 'axios';
 import { message } from 'antd';
 import messageHandler from './message';
 
+import '../styles/content.css';
+
 const API_LINK = 'http://127.0.0.1:8000/api/upload';
 const STATUS_LINK = 'http://127.0.0.1:8000/api/status';
 
@@ -86,16 +88,23 @@ function Content() {
       });
   };
 
+  const handleBack = () => {
+    setProceedToUpload(false);
+  };
+
   return (
     <>
       {proceedToUpload ? (
-        <UploadForm
-          selfieHandler={setSelfieImage}
-          idHandler={setIdImage}
-          idImage={idImage}
-          selfieImage={selfieImage}
-          fileUploadHandler={fileUploadHandler}
-        />
+        <>
+          <i class="fas fa-arrow-left back-button" onClick={handleBack}></i>
+          <UploadForm
+            selfieHandler={setSelfieImage}
+            idHandler={setIdImage}
+            idImage={idImage}
+            selfieImage={selfieImage}
+            fileUploadHandler={fileUploadHandler}
+          />
+        </>
       ) : (
         <Login
           handler={setCredentials}

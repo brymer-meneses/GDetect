@@ -1,11 +1,10 @@
-import { Typography, Button } from 'antd';
+import { useState } from 'react';
 
+import { Typography, Button } from 'antd';
 import { UserOutlined, MailOutlined } from '@ant-design/icons';
+
 import TextInput from './textInput';
 import '../styles/login.css';
-
-import { useState } from 'react';
-import axios from 'axios';
 
 const { Text } = Typography;
 

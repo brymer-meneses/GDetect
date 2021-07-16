@@ -16,12 +16,12 @@ const { Step } = Steps;
 function UploadForm(props) {
   const { width } = useWindowSize();
 
-  const selectedSelfieHandler = (event) => {
-    props.selfieHandler(event.target.files[0]);
+  const selectedSelfieHandler = (selfieImage) => {
+    props.selfieHandler(selfieImage);
   };
 
-  const selectedIdHandler = (event) => {
-    props.idHandler(event.target.files[0]);
+  const selectedIdHandler = (idImage) => {
+    props.idHandler(idImage);
   };
 
   return (

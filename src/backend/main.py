@@ -16,12 +16,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# from methods.facial_recognition import validate_faces, compute_facial_similarity
-# from methods.id_verification import verify_text
-from utils import is_filetype_valid
+
 from utils import Queue
 
 queue = Queue()
+
+from methods import verify_text, compute_facial_similarity, validate_faces
 
 
 def process_information(
@@ -29,15 +29,33 @@ def process_information(
     id_image: bytes,
     full_name: str,
     email_address: str,
-) -> bool:
+):
+    global queue
     queue.add_to_queue(email_address)
 
-    return True
+    if verify_text(full_name, id_image):
+        #  TODO: Save status to Database
+        pass
+
+    if not validate_faces(selfie_image, id_image):
+        #  TODO: Save status to Database
+        pass
+
+    if compute_facial_similarity(id_image, selfie_image) > 0.40:
+        #  TODO: Accept verification
+        pass
+    else:
+        #  TODO: Reject verification
+        pass
+
+    queue.remove_from_queue(email_address)
+    return
 
 
 @app.post("/api/status")
 async def get_status(email_address: str = Form(...)) -> JSONResponse:
 
+    global queue
     if queue.is_finished(email_address):
         # print(f"{email_address} is finished")
         return JSONResponse(
@@ -58,6 +76,9 @@ async def get_status(email_address: str = Form(...)) -> JSONResponse:
             )
 
 
+from utils import is_filetype_valid
+
+
 @app.post("/api/upload")
 async def receive_information(
     background_tasks: BackgroundTasks,
@@ -65,8 +86,12 @@ async def receive_information(
     id_image: UploadFile = File(...),
     full_name: str = Form(...),
     email_address: str = Form(...),
-):
-    """ This function will run the core GDetect algorithm """
+) -> JSONResponse:
+
+    """
+    API Endpoint that receives information and
+    assigns a function to process the information.
+    """
 
     selfie_image_file = await selfie_image.read()
     id_image_file = await id_image.read()
@@ -79,4 +104,4 @@ async def receive_information(
         process_information, selfie_image_file, id_image_file, full_name, email_address
     )
 
-    return {"message", "received information"}
+    return JSONResponse(status_code=202, content="Upload Success!")

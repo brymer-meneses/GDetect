@@ -1,17 +1,22 @@
 import numpy as np
 from deepface import DeepFace
 
-import sys
-
 
 from utils import read_image_cv2
+from database import Database
+
+from scipy.spatial.distance import cosine
 
 MODELS = ["VGG-Face", "Facenet", "OpenFace", "DeepFace", "DeepID", "ArcFace", "Dlib"]
-DATABASE = r"database"
+DATABASE_PATH = r"database/face_vectors"
+
+db = Database(path=DATABASE_PATH)
 
 
 def compute_facial_similarity(img1: bytes, img2: bytes):
-    """ Computes the facial similarity between two images """
+    """
+    Computes the facial similarity between two images
+    """
 
     img1, img2 = read_image_cv2(img1), read_image_cv2(img2)
 
@@ -20,5 +25,8 @@ def compute_facial_similarity(img1: bytes, img2: bytes):
 
 
 def check_database(img: np.ndarray):
-    df = DeepFace.find(img_path=img, model_name=MODELS[1], db_path=DATABASE)
-    return df
+
+    input_embedding = DeepFace.represent(img, model_name=MODELS[1])
+
+    for embedding in db:
+        cosine_similarity = 1 - float(cosine(embedding, embedding))

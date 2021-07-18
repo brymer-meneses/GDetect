@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import FastAPI, File, UploadFile, Form, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
@@ -17,11 +18,9 @@ app.add_middleware(
 )
 
 
-from utils import Queue
-
-queue = Queue()
-
 from methods import verify_text, compute_facial_similarity, validate_faces
+from database import session, User, Result, convert_status
+from .config import is_enabled
 
 
 def process_information(
@@ -30,53 +29,35 @@ def process_information(
     full_name: str,
     email_address: str,
 ):
-    global queue
-    queue.add_to_queue(email_address)
 
     if verify_text(full_name, id_image):
-        #  TODO: Save status to Database
         pass
 
-    if not validate_faces(selfie_image, id_image):
-        #  TODO: Save status to Database
+    if not validate_faces([selfie_image, id_image]):
         pass
 
     if compute_facial_similarity(id_image, selfie_image) > 0.40:
-        #  TODO: Accept verification
         pass
     else:
-        #  TODO: Reject verification
         pass
 
-    queue.remove_from_queue(email_address)
     return
 
 
-@app.post("/api/status")
-async def get_status(email_address: str = Form(...)) -> JSONResponse:
-
-    global queue
-    if queue.is_finished(email_address):
-        # print(f"{email_address} is finished")
-        return JSONResponse(
-            status_code=201, content="User has been verified! Congratulations!"
-        )
-    else:
-        if queue.is_processing(email_address):
-            # print(f"{email_address} is being processed")
-            return JSONResponse(
-                status_code=208,
-                content="User Verification is currently being processed",
-            )
-        else:
-            # print(f"{email_address} is NOT being processed")
-
-            return JSONResponse(
-                status_code=202, content="User Verification is not being processed"
-            )
-
-
 from utils import is_filetype_valid
+
+
+@app.post("/api/status")
+async def get_status(email_address: str = Form(...)):
+    user = session.query(Result).filter(email=email_address).one_or_none()
+    if user is None:
+        return {"verification_status": 1, "message": None, "tips": None}
+
+    return {
+        "verification_status": user.verification_status,
+        "message": convert_status(user.verification_status),
+        "tips": None,  # Populate "tips"
+    }
 
 
 @app.post("/api/upload")

@@ -29,4 +29,7 @@ def check_database(img: np.ndarray):
     input_embedding = DeepFace.represent(img, model_name=MODELS[1])
 
     for embedding in db:
-        cosine_similarity = 1 - float(cosine(embedding, embedding))
+        # TODO: Implement this
+        # cosine_similarity = 1 - float(cosine(embedding, embedding))
+        pass
+    return

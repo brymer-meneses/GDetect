@@ -1,13 +1,12 @@
 from typing import List
 from mtcnn import MTCNN
 
-from gdetect.utils import read_image_cv2, config
+from gdetect.utils import read_image_cv2
 
 
 detector = MTCNN()
 
 
-@config.link(option="guards.face_detection")
 def verify_pictures(imgs: List[bytes]) -> bool:
     """
     Calculate the number of faces that the

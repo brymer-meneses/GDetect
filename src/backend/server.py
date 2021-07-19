@@ -27,6 +27,19 @@ from gdetect.guards import verify_filetype
 from gdetect.main import process_information
 
 
+@app.on_event("startup")
+def clean_database():
+    """ Removes pending tasks that were not finished for some reason """
+    unfinished_tasks = (
+        session.query(Result).filter(Result.verification_status == 2).all()
+    )
+    for task in unfinished_tasks:
+        session.delete(task)
+
+    session.commit()
+    return
+
+
 @app.post("/api/status")
 async def get_status(email_address: str = Form(...)):
     user = session.query(Result).filter(Result.email == email_address).one_or_none()

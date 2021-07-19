@@ -1,7 +1,3 @@
-from gdetect.utils import config
-
-
-@config.link(option="guards.file_type_verification")
 def verify_filetype(filename: str, valid_filetypes=["jpeg", "png", "jpg"]) -> bool:
     """
     Helper function which determines the filetype of

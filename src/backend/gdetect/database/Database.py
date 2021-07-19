@@ -80,7 +80,6 @@ class Result(Base):
         0 - User Verification Success
         1 - User did not do any prior attempt
              to verification
-
         2 - User verification is currently being processed
         3 - Faces were not detected by the system
         4 - The two images that were uploaded, did not have

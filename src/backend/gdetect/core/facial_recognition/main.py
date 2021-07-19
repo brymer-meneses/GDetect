@@ -2,8 +2,8 @@ import numpy as np
 from deepface import DeepFace
 
 
-from utils import read_image_cv2
-from database import Database
+from gdetect.utils import read_image_cv2
+from gdetect.database import Database
 
 from scipy.spatial.distance import cosine
 

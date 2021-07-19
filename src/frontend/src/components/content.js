@@ -31,25 +31,15 @@ function Content() {
     axios
       .post(STATUS_LINK, formData)
       .then((res) => {
-        try {
-          switch (res.status) {
-            case 202:
-              message.success({ content: 'Success', key });
-              setProceedToUpload(true);
-              break;
-            case 201:
-              message.success({ content: 'User has been verified', key });
-              break;
-            case 208:
-              message.error({
-                content: 'The verification is currently being processed.',
-                key,
-              });
-              console.log('hello 208');
-              break;
+        if (res.status == 200) {
+          if (res.data.verification_status !== 1) {
+            message.success({ content: res.data.message, key });
+          } else {
+            message.success({ content: 'Success', key });
           }
-        } catch (error) {
-          message.error({ content: 'Request Timed Out', key: key });
+          setProceedToUpload(true);
+        } else {
+          message.error({ content: 'Network Error', key });
         }
       })
       .catch((err) => {

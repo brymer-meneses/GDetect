@@ -1,9 +1,12 @@
-from typing import Optional
+"""
+Handles the API for receiving information
+"""
+
+
 from fastapi import FastAPI, File, UploadFile, Form, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
-from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -18,38 +21,15 @@ app.add_middleware(
 )
 
 
-from methods import verify_text, compute_facial_similarity, validate_faces
-from database import session, User, Result, convert_status
-from .config import is_enabled
+from gdetect.database import session, User, Result, convert_status
+from gdetect.guards import verify_filetype
 
-
-def process_information(
-    selfie_image: bytes,
-    id_image: bytes,
-    full_name: str,
-    email_address: str,
-):
-
-    if verify_text(full_name, id_image):
-        pass
-
-    if not validate_faces([selfie_image, id_image]):
-        pass
-
-    if compute_facial_similarity(id_image, selfie_image) > 0.40:
-        pass
-    else:
-        pass
-
-    return
-
-
-from utils import is_filetype_valid
+from gdetect.main import process_information
 
 
 @app.post("/api/status")
 async def get_status(email_address: str = Form(...)):
-    user = session.query(Result).filter(email=email_address).one_or_none()
+    user = session.query(Result).filter(Result.email == email_address).one_or_none()
     if user is None:
         return {"verification_status": 1, "message": None, "tips": None}
 
@@ -78,7 +58,7 @@ async def receive_information(
     id_image_file = await id_image.read()
 
     for image in [selfie_image, id_image]:
-        if not is_filetype_valid(image.filename):
+        if not verify_filetype(image.filename):
             return JSONResponse(status_code=400, content="Invalid Image Filetype")
 
     background_tasks.add_task(

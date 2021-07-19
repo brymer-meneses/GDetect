@@ -7,4 +7,4 @@ source $CONDA_INIT
 conda activate gdetect
 
 cd $PROJECT_DIR/src/backend
-uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+uvicorn server:app --host 127.0.0.1 --port 8000 --reload

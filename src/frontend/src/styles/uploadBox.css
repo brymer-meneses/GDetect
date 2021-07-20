@@ -35,7 +35,11 @@
     cursor: pointer;
     text-shadow: 1px -1px 1px #595959;
 }
-/* <i class="fas fa-window-close"></i> */
+
+.icon {
+    font-size: 8rem;
+    color: #85a5ff;
+}
 
 .upload-box-contents {
     display: flex;

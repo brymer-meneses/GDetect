@@ -40,7 +40,7 @@ function Login(props) {
           className="upload-button"
           onClick={handleSubmit}
         >
-          Submit
+          Proceed
         </Button>
       </div>
     </section>

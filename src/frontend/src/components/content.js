@@ -1,12 +1,11 @@
-import UploadForm from './uploadForm.js';
-
+import { message } from 'antd';
 import { useState } from 'react';
-
-import Login from './login';
 import axios from 'axios';
 
-import { message } from 'antd';
+import UploadForm from './uploadForm.js';
+import Login from './login';
 import messageHandler from './message';
+import Progress from './progress';
 
 import '../styles/content.css';
 
@@ -19,34 +18,33 @@ function Content() {
     fullName: null,
   });
 
+  const [currentStep, setCurrentStep] = useState(0);
+
   const [selfieImage, setSelfieImage] = useState(null);
   const [idImage, setIdImage] = useState(null);
   const [proceedToUpload, setProceedToUpload] = useState(false);
 
   const checkVerificationStatus = (email) => {
     const formData = new FormData();
-    const key = 'status';
-    message.loading({ content: 'Please wait...', key });
     formData.append('email_address', email);
     axios
       .post(STATUS_LINK, formData)
       .then((res) => {
         if (res.status === 200) {
           if (res.data.verification_status !== 1) {
-            message.success({ content: res.data.message, key });
           } else {
-            message.success({ content: 'Success', key });
+            setCurrentStep(1);
           }
           setProceedToUpload(true);
         } else {
-          message.error({ content: 'Network Error', key });
+          message.error({ content: 'Network Error' });
         }
       })
       .catch((err) => {
         try {
-          message.error(err.response, key);
+          message.error(err.response);
         } catch (error) {
-          message.error({ content: 'Upload Failed', key });
+          message.error({ content: 'Upload Failed' });
         }
       });
   };
@@ -65,6 +63,7 @@ function Content() {
       .then((res) => {
         if (res !== null) {
           messageHandler(res, key);
+          setCurrentStep(2);
         } else {
           console.log('error');
         }
@@ -80,10 +79,11 @@ function Content() {
 
   const handleBack = () => {
     setProceedToUpload(false);
+    setCurrentStep(0);
   };
 
   return (
-    <>
+    <div className="content">
       {proceedToUpload ? (
         <>
           <i class="fas fa-arrow-left back-button" onClick={handleBack}></i>
@@ -101,7 +101,8 @@ function Content() {
           handleStatus={checkVerificationStatus}
         />
       )}
-    </>
+      <Progress currentStep={currentStep} />
+    </div>
   );
 }
 

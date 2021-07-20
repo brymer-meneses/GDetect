@@ -10,3 +10,10 @@
     border-radius: 0.3rem;
     box-shadow: 1px 0.7px 4px #8c8c8c;
 }
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-content: space-between;
+    align-items: center;
+}

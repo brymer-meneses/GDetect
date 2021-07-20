@@ -37,10 +37,7 @@ function UploadBox(props) {
         }}
       >
         {imagePreview === null ? (
-          <div className="upload-box-contents">
-            {props.children}
-            <UploadOutlined />
-          </div>
+          <div className="upload-box-contents">{props.children}</div>
         ) : (
           <>
             <img src={imagePreview} alt="preview" />

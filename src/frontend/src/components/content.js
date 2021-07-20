@@ -31,7 +31,7 @@ function Content() {
     axios
       .post(STATUS_LINK, formData)
       .then((res) => {
-        if (res.status == 200) {
+        if (res.status === 200) {
           if (res.data.verification_status !== 1) {
             message.success({ content: res.data.message, key });
           } else {

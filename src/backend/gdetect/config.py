@@ -1,4 +1,6 @@
 MODELS = ["VGG-Face", "Facenet", "OpenFace", "DeepFace", "DeepID", "ArcFace", "Dlib"]
+METRICS = ["cosine", "euclidean"]
+
 
 CONFIG = {
     # Weights for computing the overall fraudulence score
@@ -11,6 +13,7 @@ CONFIG = {
     "core": {
         "image_forgery_detection": True,
         "facial_similarity_detection": True,
+        "facial_similarity_database_checking": True,
         "image_cg_detection": True,
     },
     "guards": {
@@ -21,5 +24,6 @@ CONFIG = {
     "values": {
         "facial_similarity_tolerance": 0.40,
         "facial_similarity_model": MODELS[1],
+        "facial_similarity_metric": METRICS[1],
     },
 }

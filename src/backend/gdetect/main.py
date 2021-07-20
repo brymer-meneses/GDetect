@@ -4,7 +4,7 @@ Runs the main GDetect Algorithm
 
 
 from gdetect.guards import verify_idinfo, verify_pictures
-from gdetect.core import compute_facial_similarity
+from gdetect.core import compute_facial_similarity, check_database
 from gdetect.database import session, Result
 from gdetect.utils import config
 
@@ -22,9 +22,9 @@ def process_information(
     full_name: str,
     email_address: str,
 ):
-    # task = Result(email=email_address, verification_status=2)
-    # session.add(task)
-    # session.commit()
+    task = Result(email=email_address, verification_status=2)
+    session.add(task)
+    session.commit()
 
     passed_id_info_validation = config.enabled(
         "guards.id_info_validation"
@@ -36,14 +36,19 @@ def process_information(
 
     proceed_to_core_validation = passed_id_info_validation and passed_face_detection
 
+    probs = {}
     if proceed_to_core_validation:
-        probs = {}
+
+        if config.enabled("core.facial_similarity_database_checking"):
+            probs["facial_similarity_database"] = check_database(selfie_image)
+            print("passed database checking")
 
         if config.enabled("core.facial_similarity_detection"):
             probs["facial_similarity"] = compute_facial_similarity(
                 id_image, selfie_image
             )
-            print(probs["facial_similarity"])
+            print("passed fs detection")
+
         if config.enabled("core.image_forgery_detection"):
             # probs["image_forgery_detection"]
             pass
@@ -52,7 +57,7 @@ def process_information(
             # probs["image_forgery_detection"]
             pass
 
-    # session.delete(task)
-    # session.commit()
+    session.delete(task)
+    session.commit()
 
     return

@@ -21,7 +21,7 @@ app.add_middleware(
 )
 
 
-from gdetect.database import session, User, Result, convert_status
+from gdetect.database import session, User, Task, convert_status
 from gdetect.guards import verify_filetype
 
 from gdetect.main import process_information
@@ -29,10 +29,8 @@ from gdetect.main import process_information
 
 @app.on_event("startup")
 def clean_database():
-    """ Removes pending tasks that were not finished for some reason """
-    unfinished_tasks = (
-        session.query(Result).filter(Result.verification_status == 2).all()
-    )
+    """Removes pending tasks that were not finished for unknown reason"""
+    unfinished_tasks = session.query(Task).filter(Task.verification_status == 2).all()
     for task in unfinished_tasks:
         session.delete(task)
 
@@ -42,13 +40,18 @@ def clean_database():
 
 @app.post("/api/status")
 async def get_status(email_address: str = Form(...)):
-    user = session.query(Result).filter(Result.email == email_address).one_or_none()
-    if user is None:
-        return {"verification_status": 1, "message": None, "tips": None}
+    pending_task = session.query(Task).filter(Task.email == email_address).one_or_none()
+    if pending_task is None:
+        user = session.query(User).filter(User.email == email_address).one_or_none()
+        if user is None:
+            return {"verification_status": 1, "message": None, "tips": None}
+        else:
+            #  TODO: User has been verified
+            return {"verification_status": 1, "message": None, "tips": None}
 
     return {
-        "verification_status": user.verification_status,
-        "message": convert_status(user.verification_status),
+        "verification_status": pending_task.verification_status,
+        "message": convert_status(pending_task.verification_status),
         "tips": None,  # Populate "tips"
     }
 
@@ -72,7 +75,7 @@ async def receive_information(
 
     for image in [selfie_image, id_image]:
         if not verify_filetype(image.filename):
-            return JSONResponse(status_code=400, content="Invalid Image Filetype")
+            return JSONResponse(status_code=200, content="Invalid Image Filetype")
 
     background_tasks.add_task(
         process_information, selfie_image_file, id_image_file, full_name, email_address

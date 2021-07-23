@@ -2,7 +2,7 @@
 #!/bin/bash
 
 
-PROJECT_DIR=~/Projects/GDetect
+PROJECT_DIR=~/Projects/GDetect/
 CONDA_INIT=~/.local/share/apps/miniconda3/etc/profile.d/conda.sh
 
 # Source miniconda to change environment

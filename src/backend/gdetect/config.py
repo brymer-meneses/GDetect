@@ -4,17 +4,16 @@ METRICS = ["cosine", "euclidean"]
 
 CONFIG = {
     # Weights for computing the overall fraudulence score
-    "weights": {
-        "id_info_verification": 0.25,
-        "facial_similarity": 0.25,
-        "id_validation": 0.25,
-        "image_forgery": 0.25,
+    "minimum_probabilites": {
+        "facial_similarity_detection": 0.40,
+        "selfie_facial_similarity_database_checking": 0.40,
+        "id_facial_similarity_database_checking": 0.40,
+        "id_type_validation": 0.90,
     },
     "core": {
         "image_forgery_detection": True,
         "facial_similarity_detection": True,
         "facial_similarity_database_checking": True,
-        "image_cg_detection": True,
     },
     "guards": {
         "file_type_verification": True,
@@ -24,6 +23,7 @@ CONFIG = {
     "values": {
         "facial_similarity_tolerance": 0.40,
         "facial_similarity_model": MODELS[1],
-        "facial_similarity_metric": METRICS[1],
+        "facial_similarity_metric": METRICS[0],
+        "minimum_fraudulence_score": 0.0,
     },
 }

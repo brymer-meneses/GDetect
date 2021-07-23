@@ -15,7 +15,7 @@ class Ndarray(TypeDecorator):
     def process_bind_param(self, value, dialect):
         if value is not None:
             # Serialization of numpy array
-            return blosc.pack_array(value)
+            return blosc.pack_array(np.array(value))
         else:
             return None
 
@@ -27,7 +27,7 @@ class Ndarray(TypeDecorator):
             return None
 
 
-engine = create_engine("sqlite:///storage//main.db")
+engine = create_engine("sqlite:///storage//main.db?check_same_thread=false")
 session = sessionmaker(bind=engine)()
 
 Base = declarative_base()
@@ -47,12 +47,14 @@ class User(Base):
         email: str,
         full_name: str,
         verified: bool = False,
-        vector_embedding: np.ndarray = None,
+        selfie_vector_embedding: np.ndarray = None,
+        id_vector_embedding: np.ndarray = None,
     ) -> None:
         self.email = email
         self.full_name = full_name
         self.verified = verified
-        self.vector_embedding = vector_embedding
+        self.selfie_vector_embedding = selfie_vector_embedding
+        self.id_vector_embedding = id_vector_embedding
 
     def add_to_db(self, session=session) -> None:
         """Adds this object to the database"""
@@ -63,8 +65,8 @@ class User(Base):
             print("Error, duplicate entry")
 
 
-class Result(Base):
-    __tablename__ = "result"
+class Task(Base):
+    __tablename__ = "task"
 
     email = Column(String, primary_key=True)
     verification_status = Column(Integer)

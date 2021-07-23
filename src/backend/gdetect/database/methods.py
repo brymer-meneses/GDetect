@@ -1,4 +1,5 @@
 from .Database import User, session
+from typing import List
 
 
 def query_all_vector_embeddings(session=session):
@@ -8,6 +9,7 @@ def query_all_vector_embeddings(session=session):
             yield user.vector_embedding
 
 
+# TODO: Fix this
 def convert_status(status: int):
     """ helper function that converts verification status codes to string """
     conversion = {
@@ -23,3 +25,20 @@ def convert_status(status: int):
         raise ValueError("Invalid Status Code")
 
     return conversion[status]
+
+
+def add_user_to_database(
+    email: str,
+    full_name: str,
+    selfie_vector_embedding: List[float],
+    id_vector_embedding: List[float],
+):
+    user = User(
+        email=email,
+        full_name=full_name,
+        verified=True,
+        selfie_vector_embedding=selfie_vector_embedding,
+        id_vector_embedding=id_vector_embedding,
+    )
+    session.add(user)
+    session.commit()

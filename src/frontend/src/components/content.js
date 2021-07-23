@@ -1,4 +1,4 @@
-import { message } from 'antd';
+import { message, notification } from 'antd';
 import { useState } from 'react';
 import axios from 'axios';
 
@@ -11,6 +11,8 @@ import '../styles/content.css';
 
 const API_LINK = 'http://127.0.0.1:8000/api/upload';
 const STATUS_LINK = 'http://127.0.0.1:8000/api/status';
+
+//  TODO: Change message to notification
 
 function Content() {
   const [credentials, setCredentials] = useState({
@@ -32,19 +34,26 @@ function Content() {
       .then((res) => {
         if (res.status === 200) {
           if (res.data.verification_status !== 1) {
-          } else {
+          } else if (res.data.verification_status === 1) {
+            // TODO: use switch instead of if else
             setCurrentStep(1);
+          } else {
           }
           setProceedToUpload(true);
         } else {
-          message.error({ content: 'Network Error' });
+          notification.error({
+            message: 'Network Error',
+            description:
+              'It seems you may have an unstable internet connection.',
+          });
         }
       })
       .catch((err) => {
-        try {
-          message.error(err.response);
-        } catch (error) {
-          message.error({ content: 'Upload Failed' });
+        if (err.status !== 422) {
+          notification.error({
+            message: 'Server Error',
+            description: 'The server is not online, please try again later',
+          });
         }
       });
   };
@@ -65,16 +74,18 @@ function Content() {
           messageHandler(res, key);
           setCurrentStep(2);
         } else {
-          console.log('error');
+          notification.error({
+            message: 'Server Error',
+            description: 'The server is not online, please try again later',
+          });
         }
       })
-      .catch((err) => {
-        try {
-          messageHandler(err.response, key);
-        } catch (error) {
-          message.error({ content: 'Upload Failed', key });
-        }
-      });
+      .catch(
+        notification.error({
+          message: 'Network Error',
+          description: 'It seems you may have an unstable internet connection.',
+        })
+      );
   };
 
   const handleBack = () => {

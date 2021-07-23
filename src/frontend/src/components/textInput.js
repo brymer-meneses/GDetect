@@ -1,15 +1,12 @@
 import { Input } from 'antd';
 
 function TextInput(props) {
-  const handleChange = (event) => {
-    props.handler(event.target.value);
-  };
 
   return (
     <div className="text-input-container">
       <Input
         placeholder={props.placeholder}
-        onChange={handleChange}
+        onChange={props.handler}
         prefix={props.prefix}
       />
     </div>

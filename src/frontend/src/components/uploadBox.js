@@ -1,4 +1,4 @@
-import { UploadOutlined } from '@ant-design/icons';
+import { notification } from 'antd';
 import { useState } from 'react';
 import '../styles/uploadBox.css';
 
@@ -7,8 +7,23 @@ function UploadBox(props) {
   const [imagePreview, setImagePreview] = useState(null);
 
   const fileSelectedHandler = (event) => {
-    props.setFileHandler(event.target.files[0]);
-    setImagePreview(URL.createObjectURL(event.target.files[0]));
+    const file = event.target.files[0];
+    const fileType = file.name.split('.').slice(-1).pop();
+    const allowedFileType = ['jpg', 'png', 'jpeg'];
+
+    if (!allowedFileType.includes(fileType)) {
+      props.setFileHandler(null);
+      notification.error({
+        message: 'Filetype Unsupported',
+        description:
+          'The file you have uploaded is unsupported. Expected png, jpg, jpeg',
+        duration: 1,
+      });
+      return;
+    }
+
+    props.setFileHandler(file);
+    setImagePreview(URL.createObjectURL(file));
   };
 
   const handleDelete = () => {
@@ -22,6 +37,7 @@ function UploadBox(props) {
         style={{ display: 'none' }}
         type="file"
         name={props.name}
+        accept="image/png, image/jpg, image/jpeg"
         onChange={fileSelectedHandler}
         ref={(input) => {
           fileInput = input;

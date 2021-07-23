@@ -14,11 +14,11 @@ function Progress(props) {
       >
         <Step
           title="Upload Information"
-          description="Fill out your email address as well as your full name and upload your pictures"
+          description="Fill out your email address as well as your full name."
         />
         <Step
           title="Upload Pictures"
-          description="Upload a clear photo of your ID and a picture of yourself."
+          description="Upload a clear photo of your ID, and a picture of yourself."
         />
         <Step
           title="Wait for Verification"

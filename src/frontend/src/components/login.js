@@ -36,7 +36,7 @@ function Login(props) {
         </div>
         <Button
           type="primary"
-          disabled={fullName === null && email === null}
+          disabled={fullName === null || email === null}
           className="upload-button"
           onClick={handleSubmit}
         >

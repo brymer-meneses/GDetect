@@ -1,21 +1,9 @@
 import UploadBox from './uploadBox';
-
 import { Button } from 'antd';
+
 import '../styles/uploadForm.css';
-import { LoadingOutlined } from '@ant-design/icons';
-
-import { Steps } from 'antd';
-
-import useWindowSize from '../utils/useWindowSize';
-
-// TODO
-// - Change message to alert antdesign
-
-const { Step } = Steps;
 
 function UploadForm(props) {
-  const { width } = useWindowSize();
-
   const selectedSelfieHandler = (selfieImage) => {
     props.selfieHandler(selfieImage);
   };

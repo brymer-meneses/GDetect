@@ -57,14 +57,6 @@ class User(Base):
         self.selfie_vector_embedding = selfie_vector_embedding
         self.id_vector_embedding = id_vector_embedding
 
-    def add_to_db(self, session=session) -> None:
-        """Adds this object to the database"""
-        try:
-            session.add(self)
-            session.commit()
-        except Exception:
-            print("Error, duplicate entry")
-
 
 class Task(Base):
     __tablename__ = "task"
@@ -78,7 +70,7 @@ class Task(Base):
         self.verification_status = verification_status
         return
 
-    def set_status(self, status: int, session=session) -> None:
+    def end(self, status: int, session=session) -> None:
         """
         0 - User Verification Success
         1 - User did not do any prior attempt

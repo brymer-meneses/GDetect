@@ -1,2 +1,2 @@
 from .compute_facial_similarity import compute_facial_similarity
-from .check_database import check_database
+from .database_checking import database_checking

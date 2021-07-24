@@ -5,10 +5,10 @@ from gdetect.database import query_all_vector_embeddings
 from gdetect.utils import config
 
 
-def check_database(input_embedding: List):
+def database_checking(input_embedding: List) -> bool:
     embeddings = query_all_vector_embeddings()
 
-    metric = config.getvalue("facial_similarity_metric")
+    metric = config.get(family="facial_similarity", option="metric")
 
     top = None
     for embedding in embeddings:
@@ -26,4 +26,5 @@ def check_database(input_embedding: List):
             if top > result:  # type: ignore
                 top = result
 
-    return top
+    passed_database_checking = top < config.get("database_checking", "tolerance")
+    return passed_database_checking

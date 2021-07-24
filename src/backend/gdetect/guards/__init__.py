@@ -1,3 +1,1 @@
-from .verify_filetype import verify_filetype
-from .verify_idinfo import verify_idinfo
-from .verify_pictures import verify_pictures
+from .methods import verify_idinfo, verify_pictures, verify_filetype

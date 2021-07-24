@@ -40,7 +40,8 @@ class User(Base):
     email = Column(String, primary_key=True)
     full_name = Column(String)
     verified = Column(Boolean)
-    vector_embedding = Column(Ndarray)
+    selfie_vector_embedding = Column(Ndarray)
+    id_vector_embedding = Column(Ndarray)
 
     def __init__(
         self,

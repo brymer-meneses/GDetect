@@ -28,6 +28,11 @@
     margin-top: 2rem;
 }
 
+.button-container {
+    display: flex;
+    flex-direction: column;
+}
+
 @media screen and (min-width: 1024px) {
     .login-form {
         min-width: 50vw;

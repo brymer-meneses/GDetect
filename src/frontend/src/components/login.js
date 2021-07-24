@@ -15,7 +15,11 @@ function Login(props) {
   const handleSubmit = () => {
     props.handler({ email: email, fullName: fullName });
     props.handleStatus(email);
+    console.log(email);
   };
+
+  const isButtonsDisabled =
+    email === '' || email === null || fullName === '' || fullName === null;
 
   return (
     <section className="login-section">
@@ -34,14 +38,26 @@ function Login(props) {
             placeholder="Full Name"
           />
         </div>
-        <Button
-          type="primary"
-          disabled={fullName === null || email === null}
-          className="upload-button"
-          onClick={handleSubmit}
-        >
-          Proceed
-        </Button>
+        <Text style={{ marginTop: '1rem' }}></Text>
+        <div className="button-container">
+          <Button
+            type="primary"
+            disabled={isButtonsDisabled}
+            className="upload-button"
+            onClick={handleSubmit}
+          >
+            Proceed
+          </Button>
+          Recently Applied for Verification?
+          <Button
+            type="secondary"
+            disabled={isButtonsDisabled}
+            className="upload-button"
+            onClick={handleSubmit}
+          >
+            Check Status
+          </Button>
+        </div>
       </div>
     </section>
   );

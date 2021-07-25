@@ -22,4 +22,5 @@ CONFIG = {
         "metric": METRICS[0],
     },
     "id_type_validation": {"enabled": True, "tolerance": 0.10},
+    "use_gpu": True,
 }

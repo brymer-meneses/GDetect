@@ -66,8 +66,15 @@ class Task(Base):
 
     def __init__(self, email: str, verification_status: int) -> None:
 
-        self.email = email
-        self.verification_status = verification_status
+        duplicate_task = session.query(Task).filter(Task.email == email).one_or_none()
+        if duplicate_task is None:
+            self.email = email
+            self.verification_status = verification_status
+        else:
+            raise ValueError(
+                f"Account associated with email {email} is currently being processed or is finished."
+            )
+
         return
 
     def end(self, status: int, session=session) -> None:

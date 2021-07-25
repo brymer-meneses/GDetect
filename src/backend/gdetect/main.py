@@ -17,7 +17,13 @@ def process_information(
     full_name: str,
     email_address: str,
 ):
-    task = Task(email=email_address, verification_status=2)
+
+    try:
+        task = Task(email=email_address, verification_status=2)
+    except ValueError as err:
+        print(err)
+        return
+
     session.add(task)
     session.commit()
 

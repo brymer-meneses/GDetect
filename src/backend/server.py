@@ -42,6 +42,7 @@ def clean_database():
 async def get_status(email_address: str = Form(...)):
     pending_task = session.query(Task).filter(Task.email == email_address).one_or_none()
     if pending_task is None:
+        print("hi")
         user = session.query(User).filter(User.email == email_address).one_or_none()
         if user is None:
             return {"verification_status": 1, "message": None, "tips": None}

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Typography, Button } from 'antd';
+import { Typography, Button, Avatar } from 'antd';
 import { UserOutlined, MailOutlined } from '@ant-design/icons';
 
 import TextInput from './textInput';
@@ -15,7 +15,6 @@ function Login(props) {
   const handleSubmit = () => {
     props.handler({ email: email, fullName: fullName });
     props.handleStatus(email);
-    console.log(email);
   };
 
   const isButtonsDisabled =
@@ -24,7 +23,7 @@ function Login(props) {
   return (
     <section className="login-section">
       <div className="login-form">
-        <UserOutlined style={{ fontSize: '4rem' }} />
+        <Avatar size={100} icon={<UserOutlined />} />
         <Text style={{ marginTop: '1rem' }}>Enter your Information</Text>{' '}
         <div className="login-container">
           <TextInput

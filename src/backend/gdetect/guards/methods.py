@@ -2,8 +2,6 @@ from typing import List
 from mtcnn import MTCNN
 
 from gdetect.utils import read_image_cv2
-from gdetect.config import CONFIG
-from gdetect.database import session, User, Task
 
 import easyocr
 
@@ -32,10 +30,10 @@ def verify_filetype(filename: str, valid_filetypes=["jpeg", "png", "jpg"]) -> bo
 def verify_idinfo(text: str, raw_img) -> bool:
 
     reader = easyocr.Reader(lang_list=["en"], gpu=False)
-    result = reader.readtext(raw_img)
+    data = reader.readtext(raw_img)
+    detected_texts = [text[-2] for text in data]
 
-    print(result)
-    if text in result:
+    if text in detected_texts:
         return True
     else:
         return False

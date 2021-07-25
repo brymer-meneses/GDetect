@@ -27,6 +27,8 @@ def process_information(
     session.add(task)
     session.commit()
 
+    failures_count = 0
+
     passed_id_info_validation = config.enabled("id_info_validation") and verify_idinfo(
         full_name, id_image
     )
@@ -34,26 +36,14 @@ def process_information(
         [selfie_image, id_image]
     )
 
-    """
-    Verification Status Codes:
-        0 - User Verification Success
-        1 - User did not do any prior attempt
-             to verification
-        2 - User verification is currently being processed
-        3 - Faces were not detected by the system
-        4 - The two images that were uploaded, do not have
-            the same facial structure.
-        5 - Invalid ID
-        6 - Credentials don't match up with the ones written
-            in the id uploaded by the user.
-        7 - A similar facial structure has been found in the database
-    """
     if not passed_id_info_validation:
-        task.end(status=6)
+        task.add_new_failure(status=6)
+        failures_count += 1
         return
 
     if not passed_face_detection:
-        task.end(status=3)
+        task.add_new_failure(status=3)
+        failures_count += 1
         return
 
     selfie_embedding = None
@@ -70,7 +60,8 @@ def process_information(
             not passed_database_id_similarity_checking
             and not passed_database_selfie_similarity_checking
         ):
-            task.end(status=7)
+            task.add_new_failure(status=7)
+            failures_count += 1
             return
 
     if config.enabled("facial_similarity_detection"):
@@ -80,20 +71,23 @@ def process_information(
         )
 
         if not passed_facial_similarity_detection:
-            task.end(status=4)
+            task.add_new_failure(status=4)
+            failures_count += 1
             return
 
     if config.enabled("id_type_validation"):
         passed_id_type_validation = True
         if not passed_id_type_validation:
-            task.end(status=5)
+            task.add_new_failure(status=5)
+            failures_count += 1
             return
 
-    add_user_to_database(
-        email=email_address,
-        full_name=full_name,
-        selfie_vector_embedding=selfie_embedding,  # type: ignore
-        id_vector_embedding=id_embedding,  # type: ignore
-    )
+    if failures_count == 0:
+        add_user_to_database(
+            email=email_address,
+            full_name=full_name,
+            selfie_vector_embedding=selfie_embedding,  # type: ignore
+            id_vector_embedding=id_embedding,  # type: ignore
+        )
 
     return

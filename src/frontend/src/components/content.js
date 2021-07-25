@@ -29,9 +29,10 @@ function Content() {
 
   const [showResult, setShowResult] = useState(false);
   const [result, setResult] = useState({
-    status: 'error',
+    status: 'success',
+    title: null,
     message: null,
-    tips: null,
+    errors: null,
   });
 
   const checkVerificationStatus = (email) => {
@@ -69,25 +70,35 @@ function Content() {
                 7 - A similar facial structure has been found in the database
             */
           let status;
+          let title;
           let message;
-          switch (res.verification_status) {
+          console.log(res.data);
+          switch (res.data.verification_status) {
             case 0:
               status = 'success';
-              message = 'Verification Success';
+              title = 'Verification Success';
+              message = 'Congratulations, you are now a verified GCash User!';
               break;
+            // the case for "1" shouldn't be checked because it is handled
+            // at the above if statement
             case 2:
               status = 'warning';
-              message = 'Verification Pending';
+              title = 'Verification Pending';
+              message =
+                'Your verification is currently being processed, please try again later.';
               break;
             default:
               status = 'error';
-              message = 'Verification Failed';
+              title = 'Verification Failed';
+              message = 'Your verification had the following issues:';
+              break;
           }
 
           const fetchedResult = {
             status: status,
+            title: title,
             message: message,
-            tips: res.data.message,
+            errors: res.data.verification_failures,
           };
 
           setResult(fetchedResult);
@@ -149,8 +160,9 @@ function Content() {
         status={result.status}
         showResult={showResult}
         handleClose={handleCloseResult}
+        title={result.title}
         message={result.message}
-        tips={result.tips}
+        errors={result.errors}
       />
       {proceedToUpload ? (
         <>

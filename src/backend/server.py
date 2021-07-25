@@ -21,9 +21,9 @@ app.add_middleware(
 )
 
 
-from gdetect.database import session, User, Task, convert_status
+from gdetect.database import session, User, Task
 from gdetect.guards import verify_filetype
-
+from gdetect.utils import get_messages
 from gdetect.main import process_information
 
 
@@ -42,18 +42,22 @@ def clean_database():
 async def get_status(email_address: str = Form(...)):
     pending_task = session.query(Task).filter(Task.email == email_address).one_or_none()
     if pending_task is None:
-        print("hi")
+        print("hello")
         user = session.query(User).filter(User.email == email_address).one_or_none()
         if user is None:
-            return {"verification_status": 1, "message": None, "tips": None}
+            return {
+                "verification_status": 1,
+                "verification_failures": None,
+            }
         else:
-            #  TODO: User has been verified
-            return {"verification_status": 1, "message": None, "tips": None}
+            return {
+                "verification_status": 0,
+                "verification_failures": None,
+            }
 
     return {
         "verification_status": pending_task.verification_status,
-        "message": convert_status(pending_task.verification_status),
-        "tips": None,  # Populate "tips"
+        "verification_failures": get_messages(pending_task.verification_failures),
     }
 
 

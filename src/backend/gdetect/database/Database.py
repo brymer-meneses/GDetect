@@ -3,29 +3,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.schema import Column
 from sqlalchemy import String, Boolean, Integer
-from sqlalchemy.types import TypeDecorator, LargeBinary
 
+from .types import Array
 import numpy as np
-import blosc
-
-
-class Ndarray(TypeDecorator):
-    impl = LargeBinary
-
-    def process_bind_param(self, value, dialect):
-        if value is not None:
-            # Serialization of numpy array
-            return blosc.pack_array(np.array(value))
-        else:
-            return None
-
-    def process_result_value(self, value, dialect):
-        if value is not None:
-            # Deserialization of numpy array
-            return blosc.unpack_array(value)
-        else:
-            return None
-
 
 engine = create_engine("sqlite:///storage//main.db?check_same_thread=false")
 session = sessionmaker(bind=engine)()
@@ -40,8 +20,8 @@ class User(Base):
     email = Column(String, primary_key=True)
     full_name = Column(String)
     verified = Column(Boolean)
-    selfie_vector_embedding = Column(Ndarray)
-    id_vector_embedding = Column(Ndarray)
+    selfie_vector_embedding = Column(Array)
+    id_vector_embedding = Column(Array)
 
     def __init__(
         self,
@@ -63,6 +43,7 @@ class Task(Base):
 
     email = Column(String, primary_key=True)
     verification_status = Column(Integer)
+    verification_failures = Column(Array)
 
     def __init__(self, email: str, verification_status: int) -> None:
 
@@ -70,27 +51,25 @@ class Task(Base):
         if duplicate_task is None:
             self.email = email
             self.verification_status = verification_status
+            self.verification_failures = []
         else:
             raise ValueError(
-                f"Account associated with email {email} is currently being processed or is finished."
+                f"Account associated with email: {email} is currently being processed or is finished."
             )
 
         return
 
     def end(self, status: int, session=session) -> None:
-        """
-        0 - User Verification Success
-        1 - User did not do any prior attempt
-             to verification
-        2 - User verification is currently being processed
-        3 - Faces were not detected by the system
-        4 - The two images that were uploaded, did not have
-            the same facial structure.
-        5 - Invalid ID
-        6 - Credentials don't match up with the ones written
-            in the id uploaded by the user.
-        """
         self.verification_status = status
+        session.commit()
+        return
+
+    def add_new_failure(self, status: int, session=session) -> None:
+
+        if self.verification_status != -1:
+            self.verification_status = -1
+
+        self.verification_failures = np.append(self.verification_failures, status)
         session.commit()
         return
 

@@ -24,3 +24,24 @@ CONFIG = {
     "id_type_validation": {"enabled": True, "tolerance": 0.10},
     "use_gpu": True,
 }
+
+
+"""
+    Verification Status:
+
+   -1   - User verification process was finished but failed
+    0   - User Verification Success
+    1   - User did not do any prior attempt
+         to verification
+    2   - User verification is currently being processed
+
+    Error Codes:
+
+    3   - Faces were not detected by the system
+    4   - The two images that were uploaded, did not have
+        the same facial structure.
+    5   - Invalid ID
+    6   - Credentials don't match up with the ones written
+        in the id uploaded by the user.
+    7   - A similar facial structure has been found in the database
+"""

@@ -17,8 +17,9 @@ function Login(props) {
     props.handleStatus(email);
   };
 
-  const isButtonsDisabled =
+  const isProceedButtonDisabled =
     email === '' || email === null || fullName === '' || fullName === null;
+  const isCheckStatusButtonDisabled = email === '' || email === null;
 
   return (
     <section className="login-section">
@@ -41,7 +42,7 @@ function Login(props) {
         <div className="button-container">
           <Button
             type="primary"
-            disabled={isButtonsDisabled}
+            disabled={isProceedButtonDisabled}
             className="upload-button"
             onClick={handleSubmit}
           >
@@ -50,7 +51,7 @@ function Login(props) {
           Recently Applied for Verification?
           <Button
             type="secondary"
-            disabled={isButtonsDisabled}
+            disabled={isCheckStatusButtonDisabled}
             className="upload-button"
             onClick={handleSubmit}
           >

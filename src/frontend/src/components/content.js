@@ -6,6 +6,7 @@ import UploadForm from './uploadForm.js';
 import Login from './login';
 import messageHandler from './message';
 import Progress from './progress';
+import Result from './result';
 
 import '../styles/content.css';
 
@@ -26,26 +27,71 @@ function Content() {
   const [idImage, setIdImage] = useState(null);
   const [proceedToUpload, setProceedToUpload] = useState(false);
 
+  const [showResult, setShowResult] = useState(false);
+  const [result, setResult] = useState({
+    status: 'error',
+    message: null,
+    tips: null,
+  });
+
   const checkVerificationStatus = (email) => {
     const formData = new FormData();
     formData.append('email_address', email);
     axios
       .post(STATUS_LINK, formData)
       .then((res) => {
-        if (res.status === 200) {
-          if (res.data.verification_status !== 1) {
-          } else if (res.data.verification_status === 1) {
-            // TODO: use switch instead of if else
-            setCurrentStep(1);
-          } else {
-          }
-          setProceedToUpload(true);
-        } else {
+        if (!res.status === 200) {
           notification.error({
             message: 'Network Error',
             description:
               'It seems you may have an unstable internet connection.',
           });
+          return;
+        }
+        if (res.data.verification_status === 1) {
+          setProceedToUpload(true);
+          // If the account linked with that email is not currently being
+          // processed for verification, proceed to image upload
+        } else {
+          // Else show result
+          /* 
+            Verification Status Codes:
+                0 - User Verification Success
+                1 - User did not do any prior attempt
+                     to verification
+                2 - User verification is currently being processed
+                3 - Faces were not detected by the system
+                4 - The two images that were uploaded, do not have
+                    the same facial structure.
+                5 - Invalid ID
+                6 - Credentials don't match up with the ones written
+                    in the id uploaded by the user.
+                7 - A similar facial structure has been found in the database
+            */
+          let status;
+          let message;
+          switch (res.verification_status) {
+            case 0:
+              status = 'success';
+              message = 'Verification Success';
+              break;
+            case 2:
+              status = 'warning';
+              message = 'Verification Pending';
+              break;
+            default:
+              status = 'error';
+              message = 'Verification Failed';
+          }
+
+          const fetchedResult = {
+            status: status,
+            message: message,
+            tips: res.data.message,
+          };
+
+          setResult(fetchedResult);
+          setShowResult(true);
         }
       })
       .catch((err) => {
@@ -93,8 +139,19 @@ function Content() {
     setCurrentStep(0);
   };
 
+  const handleCloseResult = () => {
+    setShowResult(false);
+  };
+
   return (
     <div className="content">
+      <Result
+        status={result.status}
+        showResult={showResult}
+        handleClose={handleCloseResult}
+        message={result.message}
+        tips={result.tips}
+      />
       {proceedToUpload ? (
         <>
           <i class="fas fa-arrow-left back-button" onClick={handleBack}></i>

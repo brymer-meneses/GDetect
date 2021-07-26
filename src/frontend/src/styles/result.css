@@ -9,7 +9,7 @@
     transform: translate(-50%,-50%);
 
     /* position at the front */
-    z-index: 2;
+    z-index: 3;
 
     /* container styles */
     padding-left: 5vw;
@@ -18,7 +18,7 @@
     padding-bottom: 15vh;
 
     border-radius: 1rem;
-    border: 2px solid #bfbfbf;
+    /* border: 2px solid #bfbfbf; */
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 

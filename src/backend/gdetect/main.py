@@ -16,10 +16,15 @@ def process_information(
     id_image: bytes,
     full_name: str,
     email_address: str,
+    retry_verification: bool,
 ):
 
     try:
-        task = Task(email=email_address, verification_status=2)
+        task = Task(
+            email=email_address,
+            verification_status=2,
+            retry_verification=retry_verification,
+        )
     except ValueError as err:
         print(err)
         return

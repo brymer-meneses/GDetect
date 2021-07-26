@@ -1,1 +1,10 @@
 @import '~antd/dist/antd.css';
+
+.dim-background {
+    position: fixed;
+    min-height: 100vh;
+    min-width: 100vw;
+    background: black;
+    opacity: 0.6;
+    z-index: 3;
+}

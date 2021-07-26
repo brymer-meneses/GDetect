@@ -45,13 +45,17 @@ class Task(Base):
     verification_status = Column(Integer)
     verification_failures = Column(Array)
 
-    def __init__(self, email: str, verification_status: int) -> None:
+    def __init__(
+        self, email: str, verification_status: int, retry_verification: bool
+    ) -> None:
 
         duplicate_task = session.query(Task).filter(Task.email == email).one_or_none()
         if duplicate_task is None:
             self.email = email
             self.verification_status = verification_status
             self.verification_failures = []
+        elif retry_verification:
+            return duplicate_task
         else:
             raise ValueError(
                 f"Account associated with email: {email} is currently being processed or is finished."

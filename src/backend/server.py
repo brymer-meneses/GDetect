@@ -68,6 +68,7 @@ async def receive_information(
     id_image: UploadFile = File(...),
     full_name: str = Form(...),
     email_address: str = Form(...),
+    retry_verification: bool = Form(...),
 ) -> JSONResponse:
 
     """
@@ -83,7 +84,12 @@ async def receive_information(
             return JSONResponse(status_code=200, content="Invalid Image Filetype")
 
     background_tasks.add_task(
-        process_information, selfie_image_file, id_image_file, full_name, email_address
+        process_information,
+        selfie_image_file,
+        id_image_file,
+        full_name,
+        email_address,
+        retry_verification,
     )
 
     return JSONResponse(status_code=202, content="Upload Success!")

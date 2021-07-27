@@ -20,11 +20,13 @@ def process_information(
 ):
 
     try:
-        task = Task(
-            email=email_address,
-            verification_status=2,
-            retry_verification=retry_verification,
-        )
+        if not retry_verification:
+            task = Task(
+                email=email_address,
+                verification_status=2,
+            )
+        else:
+            task = session.query(Task).filter(Task.email == email_address).one()
     except ValueError as err:
         print(err)
         return

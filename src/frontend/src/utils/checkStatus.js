@@ -47,7 +47,6 @@ const checkStatus = ({
         let status;
         let title;
         let message;
-        console.log(res.data);
         switch (res.data.verification_status) {
           case 0:
             status = 'success';
@@ -65,7 +64,7 @@ const checkStatus = ({
           default:
             status = 'error';
             title = 'Verification Failed';
-            message = 'Your verification had the following issues:';
+            message = 'Your verification failed, please try again.';
             break;
         }
 

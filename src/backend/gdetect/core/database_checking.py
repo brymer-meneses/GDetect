@@ -1,4 +1,4 @@
-from typing import List
+from typing import Callable, List
 from scipy.spatial import distance
 
 from gdetect.database import query_all_vector_embeddings
@@ -10,17 +10,25 @@ def database_checking(input_embedding: List) -> bool:
 
     metric = config.get(family="facial_similarity_detection", option="metric")
 
-    distances = []
-    for embedding in embeddings:
-        if metric == "cosine":
-            result = distance.cosine(embedding, input_embedding)
-        elif metric == "euclidean":
-            result = distance.euclidean(embedding, input_embedding)
-        else:
-            print("Invalid Metric 'facial_similarity_metric', defaulting to cosine... ")
-            result = distance.cosine(embedding, input_embedding)
+    func: Callable
+    if metric == "cosine":
+        func = distance.cosine
+    elif metric == "euclidean":
+        func = distance.euclidean
+    else:
+        print("Invalid Metric 'facial_similarity_metric', defaulting to cosine... ")
+        func = distance.cosine
 
-        distances.append(result)
+    distances = []
+    for id_embedding, selfie_embedding in embeddings:
+        id_result = func(id_embedding, input_embedding)
+        selfie_result = func(selfie_embedding, input_embedding)
+
+        distances.append(id_result)
+        distances.append(selfie_result)
+
+    if len(distances) == 0:
+        return True
 
     distances.sort(reverse=False)
     top = distances[0]

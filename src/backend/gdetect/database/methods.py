@@ -5,8 +5,7 @@ from typing import List
 def query_all_vector_embeddings(session=session):
     users = session.query(User).all()
     for user in users:
-        if user.vector_embedding is not None:
-            yield user.vector_embedding
+        yield (user.selfie_vector_embedding, user.id_vector_embedding)
 
 
 def add_user_to_database(

@@ -2,6 +2,7 @@ from typing import List
 from mtcnn import MTCNN
 
 from gdetect.utils import read_image_cv2
+from gdetect.utils.logger import logger
 
 import easyocr
 
@@ -32,11 +33,14 @@ def verify_idinfo(text: str, raw_img) -> bool:
     reader = easyocr.Reader(lang_list=["en"], gpu=False)
     data = reader.readtext(raw_img)
     detected_texts = [text[-2] for text in data]
+    logger.debug(f"Detected Texts: {detected_texts}")
 
-    if text in detected_texts:
-        return True
-    else:
-        return False
+    for detected_text in detected_texts:
+        if text in detected_text:
+            logger.debug(f"Found Match of {text} -> {detected_text}")
+            return True
+
+    return False
 
 
 def verify_pictures(imgs: List[bytes]) -> bool:
@@ -51,6 +55,7 @@ def verify_pictures(imgs: List[bytes]) -> bool:
         img = read_image_cv2(img)
         faces = detector.detect_faces(img)
         number_of_faces += len(faces)
+    logger.debug(f"Number of Faces Detected: {number_of_faces}")
 
     if number_of_faces > 1:
         return True

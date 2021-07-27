@@ -19,14 +19,18 @@ def process_information(
     retry_verification: bool,
 ):
 
+    print(f"Processing email: {email_address}")
+    print(f"\tFull Name: {full_name}")
+    print(f"\tRetry Verification: {retry_verification}")
+
     try:
         if not retry_verification:
             task = Task(
                 email=email_address,
-                verification_status=2,
             )
         else:
             task = session.query(Task).filter(Task.email == email_address).one()
+            task.reset()
     except ValueError as err:
         print(err)
         return
@@ -36,32 +40,43 @@ def process_information(
 
     failures_count = 0
 
-    passed_id_info_validation = config.enabled("id_info_validation") and verify_idinfo(
-        full_name, id_image
-    )
-    passed_face_detection = config.enabled("face_detection") and verify_pictures(
-        [selfie_image, id_image]
-    )
+    print(">>> Validating ID Information")
+    if config.enabled("id_info_validation"):
+        passed_id_info_validation = verify_idinfo(full_name, id_image)
 
-    if not passed_id_info_validation:
-        task.add_new_failure(status=6)
-        failures_count += 1
-        return
+        if not passed_id_info_validation:
+            print("\t>>> FAILED")
+            task.add_new_failure(status=6)
+            failures_count += 1
+            return
+        else:
+            print("\t>>> SUCCESS")
+    else:
+        print("\t>>> SKIPPING")
 
-    if not passed_face_detection:
-        task.add_new_failure(status=3)
-        failures_count += 1
-        return
+    print(">>> Detecting Faces")
+    if config.enabled("face_detection"):
+        passed_face_detection = verify_pictures([selfie_image, id_image])
+        if not passed_face_detection:
+            print(">>>\tFAILED")
+            task.add_new_failure(status=3)
+            failures_count += 1
+            return
+        else:
+            print("\t>>> SUCCESS")
+    else:
+        print("\t>>> SKIPPING")
 
     selfie_embedding = None
     id_embedding = None
 
+    print(">>> Performing Database Checking")
     if config.enabled("database_checking"):
         selfie_embedding = generate_embedding(selfie_image)
         id_embedding = generate_embedding(id_image)
 
-        passed_database_selfie_similarity_checking = database_checking(selfie_input_embedding)  # type: ignore
-        passed_database_id_similarity_checking = database_checking(id_input_embedding)  # type: ignore
+        passed_database_selfie_similarity_checking = database_checking(selfie_embedding)
+        passed_database_id_similarity_checking = database_checking(id_embedding)
 
         if (
             not passed_database_id_similarity_checking
@@ -71,6 +86,7 @@ def process_information(
             failures_count += 1
             return
 
+    print(">>> Performing Facial Similarity Detection")
     if config.enabled("facial_similarity_detection"):
 
         passed_facial_similarity_detection = compute_facial_similarity(  # type: ignore
@@ -82,6 +98,7 @@ def process_information(
             failures_count += 1
             return
 
+    print(">>> Performing ID type validation")
     if config.enabled("id_type_validation"):
         passed_id_type_validation = True
         if not passed_id_type_validation:
@@ -96,5 +113,7 @@ def process_information(
             selfie_vector_embedding=selfie_embedding,  # type: ignore
             id_vector_embedding=id_embedding,  # type: ignore
         )
+        task.success()
+    print(f"Finished processing email: {email_address}")
 
     return

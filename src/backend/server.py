@@ -6,7 +6,7 @@ Handles the API for receiving information
 from fastapi import FastAPI, File, UploadFile, Form, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
-
+import os
 
 app = FastAPI()
 
@@ -20,6 +20,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Removes tensorflow logs
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 from gdetect.database import session, User, Task
 from gdetect.guards import verify_filetype
@@ -28,13 +30,14 @@ from gdetect.main import process_information
 
 
 @app.on_event("startup")
-def clean_database():
-    """Removes pending tasks that were not finished for unknown reason"""
+def server_startup():
+    # Removes pending tasks that were not finished for unknown reason
     unfinished_tasks = session.query(Task).filter(Task.verification_status == 2).all()
     for task in unfinished_tasks:
         session.delete(task)
 
     session.commit()
+
     return
 
 
@@ -42,7 +45,6 @@ def clean_database():
 async def get_status(email_address: str = Form(...)):
     pending_task = session.query(Task).filter(Task.email == email_address).one_or_none()
     if pending_task is None:
-        print("hello")
         user = session.query(User).filter(User.email == email_address).one_or_none()
         if user is None:
             return {
@@ -92,4 +94,4 @@ async def receive_information(
         retry_verification,
     )
 
-    return JSONResponse(status_code=202, content="Upload Success!")
+    return JSONResponse(status_code=200, content="Upload Success!")

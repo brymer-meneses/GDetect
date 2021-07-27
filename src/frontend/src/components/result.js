@@ -9,10 +9,6 @@ function Result(props) {
     props.handleClose(true);
   };
 
-  const RetryVerificationHandler = () => {
-    props.retryVerificationHandler();
-  };
-
   const errors =
     props.errors !== null ? (
       props.errors.map((error) => {
@@ -38,8 +34,12 @@ function Result(props) {
           title={props.title}
           subTitle={props.message}
           extra={
-            <Button type="secondary" onClick={RetryVerificationHandler}>
-              Retry Verification
+            <Button
+              style={!props.buttonVisible ? { display: 'none' } : {}}
+              type="secondary"
+              onClick={props.buttonHandler}
+            >
+              {props.buttonLabel}
             </Button>
           }
         >

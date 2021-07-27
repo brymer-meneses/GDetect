@@ -18,6 +18,6 @@ def enabled(family: str) -> bool:
     try:
         is_setting_enabled = CONFIG[family]["enabled"]
     except KeyError:
-        raise KeyError("Invalid Option")
+        raise KeyError("Invalid Config Option")
 
     return is_setting_enabled

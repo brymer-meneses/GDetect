@@ -6,7 +6,7 @@ CONFIG = {
     # Guards
     "file_type_verification": {"enabled": True},
     "face_detection": {"enabled": True},
-    "id_info_validation": {"enabled": True},
+    "id_info_validation": {"enabled": False},
     # Core
     "facial_similarity_detection": {
         "enabled": True,
@@ -16,8 +16,7 @@ CONFIG = {
     },
     "database_checking": {
         "enabled": True,
-        "selfie_similarity_tolerance": 0.40,
-        "id_similarity_tolerance": 0.40,
+        "tolerance": 0.40,
         "model": MODELS[1],
         "metric": METRICS[0],
     },

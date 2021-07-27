@@ -10,6 +10,7 @@ const fileUploadHandler = ({
   email,
   setCurrentStep,
   retryVerification,
+  setRetryVerification,
 }) => {
   const formData = new FormData();
   formData.append('selfie_image', selfieImage);
@@ -18,12 +19,13 @@ const fileUploadHandler = ({
   formData.append('email_address', email);
   formData.append('retry_verification', retryVerification);
 
+  setRetryVerification(false);
   const key = 'updatable';
   message.loading({ content: 'Uploading Images...', key });
   axios
     .post(API_LINK, formData)
     .then((res) => {
-      if (res !== null) {
+      if (res.ok) {
         message.loading({ content: 'Success', key });
         setCurrentStep(2);
       } else {

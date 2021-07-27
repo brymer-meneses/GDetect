@@ -10,6 +10,7 @@ const checkStatus = ({
   setShowResult,
   setCurrentStep,
   screenDimmedHandler,
+  retryVerificationHandler,
 }) => {
   const formData = new FormData();
   formData.append('email_address', email);
@@ -47,11 +48,13 @@ const checkStatus = ({
         let status;
         let title;
         let message;
+        let buttonVisible;
         switch (res.data.verification_status) {
           case 0:
             status = 'success';
             title = 'Verification Success';
             message = 'Congratulations, you are now a verified GCash User!';
+            buttonVisible = false;
             break;
           // the case for "1" shouldn't be checked because it is handled
           // at the above if statement
@@ -60,11 +63,13 @@ const checkStatus = ({
             title = 'Verification Pending';
             message =
               'Your verification is currently being processed, please try again later.';
+            buttonVisible = false;
             break;
           default:
             status = 'error';
             title = 'Verification Failed';
             message = 'Your verification failed, please try again.';
+            buttonVisible = true;
             break;
         }
 
@@ -73,6 +78,9 @@ const checkStatus = ({
           title: title,
           message: message,
           errors: res.data.verification_failures,
+          buttonLabel: 'Retry Verification',
+          buttonHandler: retryVerificationHandler,
+          buttonVisible: buttonVisible,
         };
 
         setResult(fetchedResult);

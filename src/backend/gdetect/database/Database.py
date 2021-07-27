@@ -45,12 +45,12 @@ class Task(Base):
     verification_status = Column(Integer)
     verification_failures = Column(Array)
 
-    def __init__(self, email: str, verification_status: int) -> None:
+    def __init__(self, email: str) -> None:
 
         duplicate_task = session.query(Task).filter(Task.email == email).one_or_none()
         if duplicate_task is None:
             self.email = email
-            self.verification_status = verification_status
+            self.verification_status = 2
             self.verification_failures = []
         else:
             raise ValueError(
@@ -59,12 +59,18 @@ class Task(Base):
 
         return
 
-    def end(self, status: int, session=session) -> None:
-        self.verification_status = status
+    def reset(self) -> None:
+        self.verification_status = 2
+        self.verification_failures = []
         session.commit()
         return
 
-    def add_new_failure(self, status: int, session=session) -> None:
+    def success(self) -> None:
+        self.verification_status = 0
+        session.commit()
+        return
+
+    def add_new_failure(self, status: int) -> None:
 
         if self.verification_status != -1:
             self.verification_status = -1

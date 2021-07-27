@@ -25,7 +25,7 @@ def read_image_cv2(data) -> np.ndarray:
 
 def generate_embedding(img: bytes) -> List[float]:
 
-    model = config.get("facial_similarity", "model")
+    model = config.get("facial_similarity_detection", "model")
     embedding = DeepFace.represent(read_image_cv2(img), model_name=model)
     return embedding
 

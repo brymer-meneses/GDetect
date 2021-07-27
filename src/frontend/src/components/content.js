@@ -29,6 +29,9 @@ function Content(props) {
     title: null,
     message: null,
     errors: null,
+    buttonLabel: null,
+    buttonHandler: null,
+    buttonVisible: false,
   });
 
   const [retryVerification, setRetryVerification] = useState(false);
@@ -41,6 +44,7 @@ function Content(props) {
       setCurrentStep,
       email: credentials.email,
       screenDimmedHandler: props.screenDimmedHandler,
+      retryVerificationHandler: handleRetryVerification,
     });
   };
 
@@ -50,6 +54,7 @@ function Content(props) {
       idImage,
       setCurrentStep,
       retryVerification,
+      setRetryVerification,
       email: credentials.email,
       fullName: credentials.fullName,
     });
@@ -82,7 +87,9 @@ function Content(props) {
           title={result.title}
           message={result.message}
           errors={result.errors}
-          retryVerificationHandler={handleRetryVerification}
+          buttonLabel={result.buttonLabel}
+          buttonHandler={result.buttonHandler}
+          buttonVisible={result.buttonVisible}
         />
         {proceedToUpload ? (
           <>

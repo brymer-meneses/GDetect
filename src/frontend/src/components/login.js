@@ -1,19 +1,18 @@
-import { useState } from 'react';
-
 import { Typography, Button, Avatar } from 'antd';
 import { UserOutlined, MailOutlined } from '@ant-design/icons';
-
 import TextInput from './textInput';
 import '../styles/login.css';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { setEmail, setFullName } from '../state/actions/setInfo';
 
 const { Text } = Typography;
 
 function Login(props) {
-  const [email, setEmail] = useState(null);
-  const [fullName, setFullName] = useState(null);
+  const { fullName, email } = useSelector((state) => state.info);
+  const dispatch = useDispatch();
 
   const handleSubmit = () => {
-    props.handler({ email: email, fullName: fullName });
     props.handleStatus(email);
   };
 
@@ -29,12 +28,12 @@ function Login(props) {
         <div className="login-container">
           <TextInput
             prefix={<MailOutlined />}
-            handler={setEmail}
+            handler={() => dispatch(setEmail)}
             placeholder="Email"
           />
           <TextInput
             prefix={<UserOutlined />}
-            handler={setFullName}
+            handler={() => dispatch(setFullName)}
             placeholder="Full Name"
           />
         </div>

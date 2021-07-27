@@ -37,6 +37,7 @@ function Content(props) {
   const [retryVerification, setRetryVerification] = useState(false);
 
   const checkStatusHandler = () => {
+    setShowResult(false);
     checkStatus({
       setProceedToUpload,
       setResult,

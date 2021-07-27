@@ -1,12 +1,11 @@
-import { useState } from 'react';
-
 import Content from './components/content';
 import Footer from './components/footer';
 import Header from './components/header';
 import './App.css';
+import { useSelector } from 'react-redux';
 
 function App() {
-  const [isScreenDimmed, setIsScreenDimmed] = useState(false);
+  const isScreenDimmed = useSelector((state) => state.isScreenDimmed);
 
   return (
     <>
@@ -15,7 +14,7 @@ function App() {
         className="dim-background"
       />
       <Header />
-      <Content screenDimmedHandler={setIsScreenDimmed} />
+      <Content />
       <Footer />
     </>
   );

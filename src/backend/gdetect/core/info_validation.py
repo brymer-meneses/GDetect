@@ -37,6 +37,7 @@ class InfoValidation(BaseMethod):
             passed_info_validation = False
             for detected_text in detected_texts:
                 if text in detected_text:
+                    logger.debug(f"text: {text}")
                     logger.debug(f"found match of {text} -> {detected_text}")
                     passed_info_validation = True
 
@@ -46,5 +47,5 @@ class InfoValidation(BaseMethod):
             else:
                 logger.info("[ Failed ]: Validating ID Information\n")
                 self.success = False
-                self._task.add_new_failure(status=5)
+                self._task.add_new_failure(status=6)
         return

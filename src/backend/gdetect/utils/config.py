@@ -1,4 +1,5 @@
 from ..config import CONFIG
+from typing import List
 
 
 def get(family: str, option: str):
@@ -21,3 +22,19 @@ def enabled(family: str) -> bool:
         raise KeyError("Invalid Config Option")
 
     return is_setting_enabled
+
+
+def get_messages(failures: List[int]) -> List[str]:
+    """Helper function that converts verification status codes to string"""
+    conversion = CONFIG["messages"]
+
+    result = []
+
+    for failure in failures:
+
+        if not failure in range(0, 8):
+            raise ValueError("Invalid Status Code")
+
+        result.append(conversion[failure])
+
+    return result

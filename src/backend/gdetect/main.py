@@ -26,6 +26,9 @@ def process_information(
     email_address: str,
     retry_verification: bool,
 ):
+    # For Debugging
+    # retry_verification = True
+
     task = _init_task(
         email=email_address, full_name=full_name, retry_verification=retry_verification
     )
@@ -35,8 +38,8 @@ def process_information(
     face_detection = FaceDetection(task=task)
     face_detection.run(selfie_image, id_image)
 
-    id_validation = InfoValidation(task=task)
-    id_validation.run(id_img=id_image, text=full_name)
+    info_validation = InfoValidation(task=task)
+    info_validation.run(id_img=id_image, text=full_name)
 
     facial_similarity = FacialSimilarity(task=task)
     facial_similarity.run(id_image, selfie_image)
@@ -74,18 +77,20 @@ def _init_task(
 
             session.add(task)
         else:
-            task = session.query(Task).filter(Task.email == email).one()
-            logger.warning(
-                f"Retry Verification is set to True but the email: {email} was not found in the database."
-            )
-            task.reset()
+            task = session.query(Task).filter(Task.email == email).one_or_none()
+            if task is None:
+                logger.warning(
+                    f"Retry Verification is set to True but the email: {email} was not found in the database."
+                )
+            else:
+                task.reset()
 
         session.commit()
         return task
     except ValueError as err:
         logger.warning(err)
         logger.warning(
-            "retry_verification is set to False, that's why database overwriting is not allowe.d"
+            "retry_verification is set to False, that's why database overwriting is not allowed."
         )
         return
 

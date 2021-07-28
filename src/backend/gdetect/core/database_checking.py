@@ -77,6 +77,6 @@ class DatabaseChecking(BaseMethod):
                 self.success = True
             else:
                 logger.info("[ Failed ]: Found similar face in the database")
-                self._task.add_new_failure(status=6)
+                self._task.add_new_failure(status=7)
 
         return

@@ -6,7 +6,6 @@ Handles the API for receiving information
 from fastapi import FastAPI, File, UploadFile, Form, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
-import os
 
 app = FastAPI()
 

@@ -1,14 +1,22 @@
 """
 Runs the main GDetect Algorithm
 """
+import os
 
-from gdetect.guards import verify_idinfo, verify_pictures
-from gdetect.core import compute_facial_similarity, database_checking
+# Removes tensorflow logs
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+
+from typing import Union, List
 from gdetect.database import session, Task
 from gdetect.database.methods import add_user_to_database
 
-from gdetect.utils import config, generate_embedding
 from gdetect.utils.logger import logger
+from gdetect.core import (
+    DatabaseChecking,
+    FacialSimilarity,
+    FaceDetection,
+    InfoValidation,
+)
 
 
 def process_information(
@@ -18,131 +26,90 @@ def process_information(
     email_address: str,
     retry_verification: bool,
 ):
+    task = _init_task(
+        email=email_address, full_name=full_name, retry_verification=retry_verification
+    )
+    if task is None:
+        return
+
+    face_detection = FaceDetection(task=task)
+    face_detection.run(selfie_image, id_image)
+
+    id_validation = InfoValidation(task=task)
+    id_validation.run(id_img=id_image, text=full_name)
+
+    facial_similarity = FacialSimilarity(task=task)
+    facial_similarity.run(id_image, selfie_image)
+
+    database_checking = DatabaseChecking(task=task)
+    database_checking.run(selfie_image, id_image)
+
+    (selfie_embedding, id_embedding) = database_checking.embeddings
+
+    _end_task(
+        task=task,
+        email=email_address,
+        full_name=full_name,
+        selfie_embedding=selfie_embedding,
+        id_embedding=id_embedding,
+    )
+
+    return
+
+
+def _init_task(
+    email: str, full_name: str, retry_verification: bool
+) -> Union[Task, None]:
 
     logger.info(
         f"[ Started ]: Task \n\t\
-        Email: {email_address}, \n\t\
+        Email: {email}, \n\t\
         Full Name: {full_name}"
     )
     logger.debug(f"Retry Verification: {retry_verification}")
 
     try:
         if not retry_verification:
-            task = Task(
-                email=email_address,
-            )
+            task = Task(email=email)
+
+            session.add(task)
         else:
-            task = session.query(Task).filter(Task.email == email_address).one()
+            task = session.query(Task).filter(Task.email == email).one()
             logger.warning(
-                f"Retry Verification is set to True but the email: {email_address} was not found in the database."
+                f"Retry Verification is set to True but the email: {email} was not found in the database."
             )
             task.reset()
+
+        session.commit()
+        return task
     except ValueError as err:
         logger.warning(err)
+        logger.warning(
+            "retry_verification is set to False, that's why database overwriting is not allowe.d"
+        )
         return
 
-    session.add(task)
-    session.commit()
 
-    failures_count = 0
+def _end_task(
+    task: Task,
+    email: str,
+    full_name: str,
+    selfie_embedding: List[float],
+    id_embedding: List[float],
+) -> None:
 
-    logger.info("[ Started ]: Validating ID Information")
-    if config.enabled("id_info_validation"):
-        passed_id_info_validation = verify_idinfo(full_name, id_image)
-
-        if not passed_id_info_validation:
-            logger.info("[ Failed ]: Validating ID Information\n")
-            task.add_new_failure(status=6)
-            failures_count += 1
-            return
-        else:
-            logger.info("[ Success ]: Validating ID Information\n")
-    else:
-        logger.info("[ Skipping ]: Not Enabled\n")
-
-    logger.info("[ Started ]: Detecting Faces in the images")
-    if config.enabled("face_detection"):
-        passed_face_detection = verify_pictures([selfie_image, id_image])
-        if not passed_face_detection:
-            logger.info("[ Failed ]: Detecting Faces\n")
-            task.add_new_failure(status=3)
-            failures_count += 1
-            return
-        else:
-            logger.info("[ Success ]: Detecting Faces\n")
-    else:
-        logger.info("[ Skipping ]: Not Enabled\n")
-
-    selfie_embedding = None
-    id_embedding = None
-
-    logger.info("[ Started ]: Performing Database Checking")
-    if config.enabled("database_checking"):
-        selfie_embedding = generate_embedding(selfie_image)
-        id_embedding = generate_embedding(id_image)
-
-        passed_database_selfie_similarity_checking = database_checking(selfie_embedding)
-        passed_database_id_similarity_checking = database_checking(id_embedding)
-
-        if (
-            not passed_database_id_similarity_checking
-            and not passed_database_selfie_similarity_checking
-        ):
-            logger.info(
-                "[ Failed ]: Found similar face in the database,\n\t\
-                Selfie: {passed_database_selfie_similarity_checking}\n\t\
-                ID: {passed_database_selfie_similarity_checking}\n"
-            )
-            task.add_new_failure(status=7)
-            failures_count += 1
-        else:
-            logger.debug(
-                "[ Success ]: No verified users were detected to have similar facial structure\n"
-            )
-    else:
-        logger.info("[ Skipping ]: Database Checking\n")
-
-    logger.info("[ Started ]: Performing Facial Similarity Detection")
-    if config.enabled("facial_similarity_detection"):
-
-        passed_facial_similarity_detection = compute_facial_similarity(  # type: ignore
-            id_image, selfie_image
-        )
-
-        if not passed_facial_similarity_detection:
-            logger.info(
-                "[ Failed ]: Images uploaded doesn't have the same facial structure\n"
-            )
-            task.add_new_failure(status=4)
-            failures_count += 1
-            return
-        else:
-            logger.info("[ Success ]: Passed Facial Similarity Detection\n")
-    else:
-        logger.info("[ Skipping ]: Facial Similarity not enabled\n")
-
-    logger.info("[ Started ]: ID type validation")
-    if config.enabled("id_type_validation"):
-        passed_id_type_validation = True
-        if not passed_id_type_validation:
-            logger.info("[ Failed ]: ID Type not supported\n")
-            task.add_new_failure(status=5)
-            failures_count += 1
-            return
-        else:
-            logger.info("[ Success ]: Detected supported ID type\n")
-    else:
-        logger.info("[ Skipping ]: ID type validation")
-
-    if failures_count == 0:
+    passed_verification = len(task.verification_failures) == 0
+    logger.info(f">>> Verification {'Success' if passed_verification else 'Failed'} ")
+    if passed_verification:
         logger.debug("Adding User to database")
         add_user_to_database(
-            email=email_address,
+            email=email,
             full_name=full_name,
-            selfie_vector_embedding=selfie_embedding,  # type: ignore
-            id_vector_embedding=id_embedding,  # type: ignore
+            selfie_vector_embedding=selfie_embedding,
+            id_vector_embedding=id_embedding,
         )
         task.success()
-    logger.info(f"Finished processing email: {email_address}\n")
+
+    logger.info(f"Finished processing email: {email}\n")
 
     return

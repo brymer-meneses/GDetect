@@ -20,12 +20,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Removes tensorflow logs
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 from gdetect.database import session, User, Task
-from gdetect.guards import verify_filetype
-from gdetect.utils import get_messages
+from gdetect.utils import get_messages, verify_filetype
 from gdetect.main import process_information
 
 

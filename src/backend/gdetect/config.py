@@ -4,10 +4,9 @@ METRICS = ["cosine", "euclidean"]
 
 CONFIG = {
     # Guards
-    "file_type_verification": {"enabled": True},
     "face_detection": {"enabled": True},
     # FIX: ID Info Validation doesn't work properly
-    "id_info_validation": {"enabled": False},
+    "info_validation": {"enabled": False, "use_gpu": False, "lang_list": ["en"]},
     # Core
     "facial_similarity_detection": {
         "enabled": True,
@@ -23,10 +22,8 @@ CONFIG = {
         "metric": METRICS[0],
     },
     # TODO: implement id type validation
-    "id_type_validation": {"enabled": True, "tolerance": 0.10},
-    "use_gpu": True,
+    "id_validation": {"enabled": True, "tolerance": 0.10},
 }
-
 
 """
     Verification Status:

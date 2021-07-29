@@ -1,10 +1,30 @@
 import { notification } from 'antd';
 import { useState } from 'react';
 import '../styles/uploadBox.css';
+import { useSetRecoilState } from 'recoil';
+import { selfieImageState, idImageState } from '../states/images';
 
 function UploadBox(props) {
   let fileInput = null;
   const [imagePreview, setImagePreview] = useState(null);
+
+  const setIdImage = useSetRecoilState(selfieImageState);
+  const setSelfieImage = useSetRecoilState(idImageState);
+
+  let setImage;
+  let icon;
+  switch (props.type) {
+    case 'selfie':
+      setImage = setSelfieImage;
+      icon = <i class="fas fa-portrait icon"></i>;
+      break;
+    case 'id':
+      setImage = setIdImage;
+      icon = <i class="fas fa-id-card icon"></i>;
+      break;
+    default:
+      console.log('Error');
+  }
 
   const fileSelectedHandler = (event) => {
     const file = event.target.files[0];
@@ -12,7 +32,7 @@ function UploadBox(props) {
     const allowedFileType = ['jpg', 'png', 'jpeg'];
 
     if (!allowedFileType.includes(fileType)) {
-      props.setFileHandler(null);
+      setImage(null);
       notification.error({
         message: 'Filetype Unsupported',
         description:
@@ -22,12 +42,12 @@ function UploadBox(props) {
       return;
     }
 
-    props.setFileHandler(file);
+    setImage(file);
     setImagePreview(URL.createObjectURL(file));
   };
 
   const handleDelete = () => {
-    props.setFileHandler(null);
+    setImage(null);
     setImagePreview(null);
   };
 
@@ -53,7 +73,7 @@ function UploadBox(props) {
         }}
       >
         {imagePreview === null ? (
-          <div className="upload-box-contents">{props.children}</div>
+          <div className="upload-box-contents">{icon}</div>
         ) : (
           <>
             <img src={imagePreview} alt="preview" />

@@ -1,15 +1,19 @@
-import useWindowSize from '../utils/useWindowSize';
 import { Steps } from 'antd';
 import '../styles/progress.css';
+import { currentStepState } from '../states/currentStep';
+
+import { useRecoilValue } from 'recoil';
+import useWindowSize from '../utils/useWindowSize';
 
 const { Step } = Steps;
 
-function Progress(props) {
+function Progress() {
   const { width } = useWindowSize();
+  const currentStep = useRecoilValue(currentStepState);
   return (
     <div className="progress-container" style={{ alignItems: 'center' }}>
       <Steps
-        current={props.currentStep}
+        current={currentStep}
         direction={width < 800 ? 'vertical' : 'horizontal'}
       >
         <Step

@@ -1,12 +1,13 @@
-import { useState } from 'react';
-
 import Content from './components/content';
 import Footer from './components/footer';
 import Header from './components/header';
 import './App.css';
 
+import { useRecoilValue } from 'recoil';
+import { isScreenDimmedState } from './states/isScreenDimmed';
+
 function App() {
-  const [isScreenDimmed, setIsScreenDimmed] = useState(false);
+  const isScreenDimmed = useRecoilValue(isScreenDimmedState);
 
   return (
     <>
@@ -15,7 +16,7 @@ function App() {
         className="dim-background"
       />
       <Header />
-      <Content screenDimmedHandler={setIsScreenDimmed} />
+      <Content />
       <Footer />
     </>
   );

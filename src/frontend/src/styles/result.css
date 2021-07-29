@@ -12,18 +12,20 @@
     z-index: 3;
 
     /* container styles */
-    padding-left: 2vw;
-    padding-right: 2vw;
-    padding-top: 5vh;
-    padding-bottom: 5vh;
+    padding-left: 1vw;
+    padding-right: 1vw;
+    padding-top: 1vh;
+    padding-bottom: 1vh;
 
     border-radius: 1rem;
     /* border: 2px solid #bfbfbf; */
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
 }
 
 .result {
     min-width: 60vw;
+    min-height: 60vh;
 }
 
 .close-button {
@@ -33,3 +35,9 @@
     cursor: pointer;
 }
 
+@media screen and (max-width: 480px) {
+    .result {
+        min-width: 80vw;
+        max-height: 90vh;
+    }
+}

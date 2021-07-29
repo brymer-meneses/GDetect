@@ -104,7 +104,7 @@ def _end_task(
 ) -> None:
 
     passed_verification = len(task.verification_failures) == 0
-    logger.info(f">>> Verification {'Success' if passed_verification else 'Failed'} ")
+    logger.info(f"Verification {'Success' if passed_verification else 'Failed'} ")
     if passed_verification:
         logger.debug("Adding User to database")
         add_user_to_database(

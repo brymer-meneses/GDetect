@@ -4,33 +4,36 @@ import '../styles/uploadForm.css';
 import UploadBox from './uploadBox';
 import fileUploadHandler from '../utils/fileUploadHandler';
 
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState, useRecoilState } from 'recoil';
 
 import { idImageState, selfieImageState } from '../states/images';
 import { emailState, fullNameState } from '../states/info';
 import { isRetryVerificationState } from '../states/isRetryVerification';
 import { currentStepState } from '../states/currentStep';
+import { resultState } from '../states/result';
 
 function UploadForm() {
   const selfieImage = useRecoilValue(selfieImageState);
   const idImage = useRecoilValue(idImageState);
   const fullName = useRecoilValue(fullNameState);
   const email = useRecoilValue(emailState);
-  const isRetryVerification = useRecoilValue(isRetryVerificationState);
+  const [isRetryVerification, setIsRetryVerification] = useRecoilState(
+    isRetryVerificationState
+  );
   const setCurrentStep = useSetRecoilState(currentStepState);
 
+  const setResult = useSetRecoilState(resultState);
+
   const onUpload = () => {
-    const isUploadSuccess = fileUploadHandler({
+    fileUploadHandler({
       selfieImage,
       idImage,
       fullName,
       email,
       isRetryVerification,
+      setIsRetryVerification,
+      setResult,
     });
-
-    if (isUploadSuccess) {
-      setCurrentStep(2);
-    }
   };
   return (
     <div className="upload-form">

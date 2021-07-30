@@ -11,7 +11,7 @@ import { isRetryVerificationState } from '../states/isRetryVerification';
 import { isOnUploadPageState } from '../states/isOnUploadPage';
 
 function Result() {
-  const { Paragraph } = Typography;
+  const { Paragraph, Text } = Typography;
   const [isResultShown, setIsResultShown] = useRecoilState(isResultShownState);
   const fetchedResult = useRecoilValue(resultState);
   const setIsScreenDimmed = useSetRecoilState(isScreenDimmedState);
@@ -30,7 +30,7 @@ function Result() {
           return (
             <Paragraph>
               <CloseCircleOutlined style={{ color: 'red' }} />
-              {error}
+              <Text type="secondary">{error}</Text>
             </Paragraph>
           );
         })
@@ -82,30 +82,56 @@ function Result() {
         setIsResultShown(false);
       };
       break;
+    default:
+      buttonLabel = '';
+      isButtonVisible = false;
+      buttonHandler = () => {
+        setIsRetryVerification(false);
+        setIsScreenDimmed(false);
+        setIsResultShown(false);
+      };
   }
 
   return (
     <>
       {isResultShown ? (
         <div className="result-container">
-          <ResultComponent
-            className="result"
-            status={fetchedResult.status}
-            title={fetchedResult.title}
-            subTitle={fetchedResult.message}
-            extra={
-              <Button
-                style={!isButtonVisible ? { display: 'none' } : {}}
-                type="secondary"
-                onClick={buttonHandler}
-              >
-                {buttonLabel}
-              </Button>
-            }
-          >
-            {errors}
-          </ResultComponent>
-          <CloseOutlined className="close-button" onClick={handleClose} />
+          <div className="result-content">
+            <ResultComponent
+              className="result"
+              status={fetchedResult.status}
+              title={fetchedResult.title}
+              subTitle={fetchedResult.message}
+              extra={
+                <Button
+                  style={!isButtonVisible ? { display: 'none' } : {}}
+                  type="secondary"
+                  onClick={buttonHandler}
+                >
+                  {buttonLabel}
+                </Button>
+              }
+            >
+              <div>
+                {fetchedResult.verificationStatus === -1 ? (
+                  <Paragraph>
+                    <Text
+                      strong
+                      style={{
+                        fontSize: 16,
+                      }}
+                    >
+                      Your verification had the following errors:
+                    </Text>
+                  </Paragraph>
+                ) : (
+                  ''
+                )}
+                {errors}
+              </div>
+            </ResultComponent>
+            <CloseOutlined className="close-button" onClick={handleClose} />
+          </div>
         </div>
       ) : (
         <div />

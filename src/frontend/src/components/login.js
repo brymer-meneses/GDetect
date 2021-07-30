@@ -4,7 +4,6 @@ import LoginButton from './loginButtons';
 import TextInput from './textInput';
 
 import '../styles/login.css';
-import { useEffect } from 'react';
 
 const { Text } = Typography;
 

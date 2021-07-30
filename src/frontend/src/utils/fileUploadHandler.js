@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { StopOutlined, CloudUploadOutlined } from '@ant-design/icons';
 import { notification, message } from 'antd';
 
 const API_LINK = 'http://127.0.0.1:8000/api/upload';
@@ -9,6 +10,8 @@ const fileUploadHandler = ({
   fullName,
   email,
   isRetryVerification,
+  setIsRetryVerification,
+  setResult,
 }) => {
   const formData = new FormData();
   formData.append('selfie_image', selfieImage);
@@ -17,22 +20,36 @@ const fileUploadHandler = ({
   formData.append('email_address', email);
   formData.append('retry_verification', isRetryVerification);
 
+  const uploadSuccess = {
+    status: null,
+    icon: <CloudUploadOutlined />,
+    title: 'Upload Success',
+    message:
+      'Congrats! Your account is now currently being processed for verification.',
+  };
+
+  const uploadFailed = {
+    status: null,
+    icon: <StopOutlined />,
+    message: 'Something went upon uploading your information to the server.',
+  };
+
   const key = 'updatable';
   message.loading({ content: 'Uploading Images...', key });
 
-  let isUploadSuccess = false;
   axios
     .post(API_LINK, formData)
     .then((res) => {
       if (res.ok) {
         message.loading({ content: 'Success', key });
-        isUploadSuccess = true;
+        setIsRetryVerification(true);
+        setResult(uploadSuccess);
       } else {
         notification.error({
           message: 'Server Error',
           description: 'The server is not online, please try again later',
         });
-        isUploadSuccess = false;
+        setResult(uploadFailed);
       }
     })
     .catch((err) => {
@@ -40,9 +57,8 @@ const fileUploadHandler = ({
         message: 'Network Error',
         description: 'It seems you may have an unstable internet connection.',
       });
-      isUploadSuccess = false;
+      setResult(uploadFailed);
     });
-  return isUploadSuccess;
 };
 
 export default fileUploadHandler;

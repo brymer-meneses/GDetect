@@ -1,0 +1,3 @@
+# ignore Jupyter Notebooks as they misrepresent 
+# the project
+*.ipynb linguist-detectable=false

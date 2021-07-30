@@ -21,7 +21,7 @@ app.add_middleware(
 
 
 from gdetect.database import session, User, Task
-from gdetect.utils import get_messages, verify_filetype
+from gdetect.utils import get_messages, verify_filetype, config
 from gdetect.main import process_information
 
 
@@ -81,13 +81,14 @@ async def receive_information(
         if not verify_filetype(image.filename):
             return JSONResponse(status_code=200, content="Invalid Image Filetype")
 
-    background_tasks.add_task(
-        process_information,
-        selfie_image_file,
-        id_image_file,
-        full_name,
-        email_address,
-        retry_verification,
-    )
+    if config.enabled("system"):
+        background_tasks.add_task(
+            process_information,
+            selfie_image_file,
+            id_image_file,
+            full_name,
+            email_address,
+            retry_verification,
+        )
 
-    return JSONResponse(status_code=200, content="Upload Success!")
+    return JSONResponse(status_code=200, content={"message": "Upload Success!"})

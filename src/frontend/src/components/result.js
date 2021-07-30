@@ -1,143 +1,33 @@
-import { Result as ResultComponent, Typography, Button } from 'antd';
-import { CloseOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import '../styles/result.css';
 
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { isResultShownState } from '../states/isResultShown';
-import { isScreenDimmedState } from '../states/isScreenDimmed';
 import { resultState } from '../states/result';
-import { isRetryVerificationState } from '../states/isRetryVerification';
-import { isOnUploadPageState } from '../states/isOnUploadPage';
+import { isScreenDimmedState } from '../states/isScreenDimmed';
+import ResultVerification from './resultVerification';
+import ResultUpload from './resultUpload';
 
 function Result() {
-  const { Paragraph, Text } = Typography;
-  const [isResultShown, setIsResultShown] = useRecoilState(isResultShownState);
+  const isResultShown = useRecoilValue(isResultShownState);
   const fetchedResult = useRecoilValue(resultState);
   const setIsScreenDimmed = useSetRecoilState(isScreenDimmedState);
 
-  const setIsRetryVerification = useSetRecoilState(isRetryVerificationState);
-  const setIsOnUploadPage = useSetRecoilState(isOnUploadPageState);
-
-  const handleClose = () => {
-    setIsResultShown(false);
+  let Content;
+  if (fetchedResult === null) {
     setIsScreenDimmed(false);
-  };
-
-  const errors =
-    fetchedResult.errors !== null
-      ? fetchedResult.errors.map((error) => {
-          return (
-            <Paragraph>
-              <CloseCircleOutlined style={{ color: 'red' }} />
-              <Text type="secondary">{error}</Text>
-            </Paragraph>
-          );
-        })
-      : '';
-
-  let isButtonVisible;
-  let buttonHandler = () => {};
-  let buttonLabel;
-
-  switch (fetchedResult.verificationStatus) {
-    case -1:
-      // Verification Failed
-      buttonLabel = 'Retry Verification';
-      isButtonVisible = true;
-      buttonHandler = () => {
-        setIsRetryVerification(true);
-        setIsOnUploadPage(true);
-        setIsScreenDimmed(false);
-        setIsResultShown(false);
-      };
-      break;
-    case 0:
-      // Verification Success
-      buttonLabel = '';
-      isButtonVisible = false;
-      buttonHandler = () => {
-        setIsRetryVerification(false);
-        setIsScreenDimmed(false);
-        setIsResultShown(false);
-      };
-      break;
-    case 1:
-      // No pending verification was linked to this email
-      buttonLabel = '';
-      isButtonVisible = false;
-      buttonHandler = () => {
-        setIsRetryVerification(false);
-        setIsScreenDimmed(false);
-        setIsResultShown(false);
-      };
-      break;
-    case 2:
-      // Verification is currently being processed.
-      buttonLabel = '';
-      isButtonVisible = false;
-      buttonHandler = () => {
-        setIsRetryVerification(false);
-        setIsScreenDimmed(false);
-        setIsResultShown(false);
-      };
-      break;
-    default:
-      buttonLabel = '';
-      isButtonVisible = false;
-      buttonHandler = () => {
-        setIsRetryVerification(false);
-        setIsScreenDimmed(false);
-        setIsResultShown(false);
-      };
+    return '';
+  }
+  if (fetchedResult.type === 'verification') {
+    Content = () => {
+      return <ResultVerification />;
+    };
+  } else if (fetchedResult.type === 'upload') {
+    Content = () => {
+      return <ResultUpload />;
+    };
   }
 
-  return (
-    <>
-      {isResultShown ? (
-        <div className="result-container">
-          <div className="result-content">
-            <ResultComponent
-              className="result"
-              status={fetchedResult.status}
-              title={fetchedResult.title}
-              subTitle={fetchedResult.message}
-              extra={
-                <Button
-                  style={!isButtonVisible ? { display: 'none' } : {}}
-                  type="secondary"
-                  onClick={buttonHandler}
-                >
-                  {buttonLabel}
-                </Button>
-              }
-            >
-              <div>
-                {fetchedResult.verificationStatus === -1 ? (
-                  <Paragraph>
-                    <Text
-                      strong
-                      style={{
-                        fontSize: 16,
-                      }}
-                    >
-                      Your verification had the following errors:
-                    </Text>
-                  </Paragraph>
-                ) : (
-                  ''
-                )}
-                {errors}
-              </div>
-            </ResultComponent>
-            <CloseOutlined className="close-button" onClick={handleClose} />
-          </div>
-        </div>
-      ) : (
-        <div />
-      )}
-    </>
-  );
+  return isResultShown ? <Content /> : '';
 }
-
 export default Result;

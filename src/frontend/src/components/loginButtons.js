@@ -38,7 +38,6 @@ function LoginButtons() {
       setCurrentStep(1);
     } else {
       setIsResultShown(true);
-      setIsScreenDimmed(true);
     }
   };
 

@@ -2,6 +2,7 @@ const processResult = (res) => {
   let status;
   let title;
   let message;
+  const type = "verification"
   switch (res.data.verification_status) {
     case 0:
       status = 'success';
@@ -20,7 +21,7 @@ const processResult = (res) => {
       message =
         'Your verification is currently being processed, please try again later.';
       break;
-    default:
+    case -1:
       status = 'error';
       title = 'Verification Failed';
       message = 'Your verification failed, please try again.';
@@ -30,6 +31,7 @@ const processResult = (res) => {
   return {
     status: status,
     title: title,
+    type: type,
     message: message,
     errors: res.data.verification_failures,
     verificationStatus: res.data.verification_status,

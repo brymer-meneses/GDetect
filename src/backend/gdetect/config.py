@@ -35,4 +35,7 @@ CONFIG = {
         6: "ID Information doesn't match up with the given information.",
         7: "A similar facial structure has been found in the database.",
     },
+    "system": {
+        "enabled": True,
+    },
 }

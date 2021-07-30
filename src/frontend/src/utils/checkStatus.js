@@ -31,7 +31,6 @@ const checkStatus = ({ email, setResult }) => {
         setResult(fetchedResult);
       }
     });
-  console.log('fetched result is ', fetchedResult);
 };
 
 export default checkStatus;

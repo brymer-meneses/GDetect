@@ -31,6 +31,7 @@ class InfoValidation(BaseMethod):
             logger.info("[ Started ]: Validating ID Information")
             reader = easyocr.Reader(self._lang_list, self._use_gpu)
             data = reader.readtext(id_img)
+            print(data)
             detected_texts = [text[-2] for text in data]
             logger.debug(f"detected texts: {detected_texts}")
 

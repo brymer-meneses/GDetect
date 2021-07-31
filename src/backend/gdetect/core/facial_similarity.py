@@ -32,7 +32,9 @@ class FacialSimilarity(BaseMethod):
                 read_image_cv2(img2),
                 model_name=self._model_name,
             )
-            passed_facial_similarity = result["distance"] < self._tolerance
+            distance = result["distance"]
+            logger.debug(f"Similarity: {distance}")
+            passed_facial_similarity = distance < self._tolerance
 
             if passed_facial_similarity:
                 logger.info("[ Success ]: Passed Facial Similarity Detection\n")

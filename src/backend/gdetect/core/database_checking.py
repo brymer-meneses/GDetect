@@ -1,4 +1,6 @@
+from typing import List
 from scipy.spatial import distance
+from sqlalchemy.sql.coercions import LimitOffsetImpl
 
 from gdetect.database import query_all_vector_embeddings, Task
 from gdetect.utils import config, generate_embedding
@@ -19,7 +21,9 @@ class DatabaseChecking(BaseMethod):
         self._tolerance = config.get(self._config_name, "tolerance")
         return
 
-    def run(self, selfie_img: bytes, id_img: bytes) -> None:
+    def run(
+        self, selfie_input_embedding: List[float], id_input_embedding: List[float]
+    ) -> None:
         """
         Checks the database for facial similarities
         """
@@ -43,14 +47,6 @@ class DatabaseChecking(BaseMethod):
                     "Invalid Metric for 'facial_similarity', defaulting to cosine"
                 )
 
-            selfie_input_embedding = generate_embedding(selfie_img)
-            id_input_embedding = generate_embedding(id_img)
-
-            # Save input embeddings
-            # This will be saved in the database later
-            # if verification is successful
-            self.embeddings = (selfie_input_embedding, id_input_embedding)
-
             # logger.debug(f"Input: {id_input_embedding} {selfie_input_embedding}")
             distances = []
             for id_embedding, selfie_embedding in embeddings:
@@ -66,7 +62,7 @@ class DatabaseChecking(BaseMethod):
 
             distances.sort(reverse=False)
             top = distances[0]
-            # logger.debug(f"Distances: {distances}")
+            logger.debug(f"Distances: {distances}")
             logger.debug(f"Top Distance: {top}")
 
             passed_database_checking = top > self._tolerance

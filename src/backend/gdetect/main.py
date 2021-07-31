@@ -1,6 +1,8 @@
 """
 Runs the main GDetect Algorithm
 """
+from gdetect.utils.methods import generate_embedding
+from gdetect.core.id_validation import IdValidation
 import os
 
 # Removes tensorflow logs
@@ -10,6 +12,7 @@ from typing import Union, List
 from gdetect.database import session, Task
 from gdetect.database.methods import add_user_to_database
 
+from gdetect.utils import read_image_pil
 from gdetect.utils.logger import logger
 from gdetect.core import (
     DatabaseChecking,
@@ -35,6 +38,9 @@ def process_information(
     if task is None:
         return
 
+    image = read_image_pil(id_image)
+    image.show()
+
     face_detection = FaceDetection(task=task)
     face_detection.run(selfie_image, id_image)
 
@@ -44,10 +50,14 @@ def process_information(
     facial_similarity = FacialSimilarity(task=task)
     facial_similarity.run(id_image, selfie_image)
 
-    database_checking = DatabaseChecking(task=task)
-    database_checking.run(selfie_image, id_image)
+    id_validation = IdValidation(task=task)
+    id_validation.run(id_img=id_image)
 
-    (selfie_embedding, id_embedding) = database_checking.embeddings
+    selfie_embedding = generate_embedding(selfie_image)
+    id_embedding = generate_embedding(id_image)
+
+    database_checking = DatabaseChecking(task=task)
+    database_checking.run(selfie_embedding, id_embedding)
 
     _end_task(
         task=task,

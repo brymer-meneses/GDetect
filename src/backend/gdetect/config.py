@@ -21,7 +21,12 @@ CONFIG = {
         "metric": METRICS[0],
     },
     # TODO: implement id type validation
-    "id_validation": {"enabled": True, "tolerance": 0.10},
+    "id_validation": {
+        "enabled": True,
+        "tolerance": 0.10,
+        "image_dims": (380, 380),
+        "model_path": "storage/model.h5",
+    },
     "messages": {
         # Verification Status:
         -1: "Verification Failed.",

@@ -8,8 +8,8 @@ function UploadBox(props) {
   let fileInput = null;
   const [imagePreview, setImagePreview] = useState(null);
 
-  const setIdImage = useSetRecoilState(selfieImageState);
-  const setSelfieImage = useSetRecoilState(idImageState);
+  const setSelfieImage = useSetRecoilState(selfieImageState);
+  const setIdImage = useSetRecoilState(idImageState);
 
   let setImage;
   let icon;

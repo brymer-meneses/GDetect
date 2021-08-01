@@ -12,7 +12,6 @@ from typing import Union, List
 from gdetect.database import session, Task
 from gdetect.database.methods import add_user_to_database
 
-from gdetect.utils import read_image_pil
 from gdetect.utils.logger import logger
 from gdetect.core import (
     DatabaseChecking,
@@ -37,9 +36,6 @@ def process_information(
     )
     if task is None:
         return
-
-    image = read_image_pil(id_image)
-    image.show()
 
     face_detection = FaceDetection(task=task)
     face_detection.run(selfie_image, id_image)

@@ -8,7 +8,7 @@
     padding-left: 1.7em;
     cursor: pointer;
     border-radius: 0.3rem;
-    box-shadow: 1px 0.7px 4px #8c8c8c;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .content {

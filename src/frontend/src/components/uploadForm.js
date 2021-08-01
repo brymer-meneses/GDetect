@@ -29,6 +29,7 @@ function UploadForm() {
 
   const setResult = useSetRecoilState(resultState);
   const setIsResultShown = useSetRecoilState(isResultShownState);
+  const setIsRetryVerification = useSetRecoilState(isRetryVerificationState);
 
   const [isUploadSuccess, setIsUploadSuccess] = useState(false);
 
@@ -64,6 +65,7 @@ function UploadForm() {
     setCurrentStep(2);
     setIsScreenDimmed(true);
     setIsResultShown(true);
+    setIsRetryVerification(false);
   };
 
   return (

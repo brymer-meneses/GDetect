@@ -4,6 +4,9 @@ import '../styles/uploadBox.css';
 import { useSetRecoilState } from 'recoil';
 import { selfieImageState, idImageState } from '../states/images';
 
+import { faPortrait, faIdCard } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 function UploadBox(props) {
   let fileInput = null;
   const [imagePreview, setImagePreview] = useState(null);
@@ -16,11 +19,11 @@ function UploadBox(props) {
   switch (props.type) {
     case 'selfie':
       setImage = setSelfieImage;
-      icon = <i class="fas fa-portrait icon"></i>;
+      icon = <FontAwesomeIcon icon={faPortrait} class="icon"></FontAwesomeIcon>;
       break;
     case 'id':
       setImage = setIdImage;
-      icon = <i class="fas fa-id-card icon"></i>;
+      icon = <FontAwesomeIcon icon={faIdCard} class="icon"></FontAwesomeIcon>;
       break;
     default:
       console.log('Error');

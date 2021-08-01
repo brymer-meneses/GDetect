@@ -1,6 +1,5 @@
 from typing import List
 from scipy.spatial import distance
-from sqlalchemy.sql.coercions import LimitOffsetImpl
 
 from gdetect.database import query_all_vector_embeddings, Task
 from gdetect.utils import config, generate_embedding

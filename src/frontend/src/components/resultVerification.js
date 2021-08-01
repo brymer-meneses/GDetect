@@ -9,6 +9,7 @@ import { isScreenDimmedState } from '../states/isScreenDimmed';
 import { resultState } from '../states/result';
 import { isRetryVerificationState } from '../states/isRetryVerification';
 import { isOnUploadPageState } from '../states/isOnUploadPage';
+import { currentStepState } from '../states/currentStep';
 
 function ResultUpload() {
   const { Paragraph, Text } = Typography;
@@ -18,6 +19,8 @@ function ResultUpload() {
 
   const setIsRetryVerification = useSetRecoilState(isRetryVerificationState);
   const setIsOnUploadPage = useSetRecoilState(isOnUploadPageState);
+
+  const setCurrentStep = useSetRecoilState(currentStepState);
 
   const handleClose = () => {
     setIsResultShown(false);
@@ -29,7 +32,9 @@ function ResultUpload() {
       ? fetchedResult.errors.map((error) => {
           return (
             <Paragraph>
-              <CloseCircleOutlined style={{ color: 'red' }} />
+              <CloseCircleOutlined
+                style={{ color: 'red', marginRight: '5px' }}
+              />
               <Text type="secondary">{error}</Text>
             </Paragraph>
           );
@@ -47,6 +52,7 @@ function ResultUpload() {
       isButtonVisible = true;
       buttonHandler = () => {
         setIsRetryVerification(true);
+        setCurrentStep(1);
         setIsOnUploadPage(true);
         setIsScreenDimmed(false);
         setIsResultShown(false);

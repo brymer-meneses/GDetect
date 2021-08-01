@@ -7,15 +7,23 @@ import { isOnUploadPageState } from '../states/isOnUploadPage';
 
 import '../styles/content.css';
 import { currentStepState } from '../states/currentStep.js';
+import { emailState, fullNameState } from '../states/info';
+
+import { ArrowLeftOutlined } from '@ant-design/icons';
 
 function Content() {
   const [isOnUploadPage, setIsOnUploadPage] = useRecoilState(
     isOnUploadPageState
   );
+  const setEmailState = useSetRecoilState(emailState);
+  const setFullNameState = useSetRecoilState(fullNameState);
+
   const setCurrentStep = useSetRecoilState(currentStepState);
   const handleBack = () => {
     setIsOnUploadPage(false);
     setCurrentStep(0);
+    setEmailState('');
+    setFullNameState('');
   };
 
   return (
@@ -24,7 +32,10 @@ function Content() {
       <div className="content">
         {isOnUploadPage ? (
           <>
-            <i class="fas fa-arrow-left back-button" onClick={handleBack}></i>
+            <ArrowLeftOutlined
+              className="back-button"
+              onClick={handleBack}
+            ></ArrowLeftOutlined>
             <UploadForm />
           </>
         ) : (

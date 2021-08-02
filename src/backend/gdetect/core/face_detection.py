@@ -1,4 +1,3 @@
-from typing import List
 from mtcnn import MTCNN
 
 from gdetect.utils import read_image_cv2
@@ -8,12 +7,8 @@ from gdetect.database import Task
 
 
 class FaceDetection(BaseMethod):
-    @property
-    def _config_name(self) -> str:
-        return "face_detection"
-
     def __init__(self, task: Task) -> None:
-        super().__init__()
+        super().__init__(config_name="face_detection")
         self._task = task
         self._detector = MTCNN()
         return

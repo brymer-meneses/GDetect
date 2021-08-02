@@ -7,12 +7,8 @@ import easyocr
 
 
 class InfoValidation(BaseMethod):
-    @property
-    def _config_name(self) -> str:
-        return "info_validation"
-
     def __init__(self, task: Task) -> None:
-        super().__init__()
+        super().__init__(config_name="info_validation")
         self._task = task
         self._lang_list = config.get(self._config_name, "lang_list")
         self._use_gpu = config.get(self._config_name, "use_gpu")

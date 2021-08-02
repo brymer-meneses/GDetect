@@ -2,19 +2,15 @@ from typing import List
 from scipy.spatial import distance
 
 from gdetect.database import query_all_vector_embeddings, Task
-from gdetect.utils import config, generate_embedding
+from gdetect.utils import config
 from gdetect.utils.logger import logger
 
 from gdetect.core.base import BaseMethod
 
 
 class DatabaseChecking(BaseMethod):
-    @property
-    def _config_name(self) -> str:
-        return "database_checking"
-
     def __init__(self, task: Task) -> None:
-        super().__init__()
+        super().__init__(config_name="database_checking")
         self._task = task
         self._metric = config.get(self._config_name, "metric")
         self._tolerance = config.get(self._config_name, "tolerance")

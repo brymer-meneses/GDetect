@@ -10,12 +10,8 @@ from gdetect.database import Task
 
 
 class IdValidation(BaseMethod):
-    @property
-    def _config_name(self) -> str:
-        return "id_validation"
-
     def __init__(self, task: Task) -> None:
-        super().__init__()
+        super().__init__(config_name="id_validation")
         self._task = task
         self._labels = {
             0: "DRIVERS_LICENSE",

@@ -1,6 +1,6 @@
 import { Button } from 'antd';
 
-import { useRecoilValue, useSetRecoilState, useRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import checkStatus from '../utils/checkStatus';
 
 import { emailState, fullNameState } from '../states/info';
@@ -15,21 +15,24 @@ function LoginButtons() {
   const fullName = useRecoilValue(fullNameState);
   const setCurrentStep = useSetRecoilState(currentStepState);
   const setIsOnUploadPage = useSetRecoilState(isOnUploadPageState);
-  const [fetchedResult, setResult] = useRecoilState(resultState);
+  const setResult = useSetRecoilState(resultState);
   const setIsResultShown = useSetRecoilState(isResultShownState);
   const setIsScreenDimmed = useSetRecoilState(isScreenDimmedState);
 
   const isProceedButtonDisabled = email === '' || fullName === '';
   const isCheckStatusButtonDisabled = email === '';
 
-  const handleCheckStatus = () => {
-    checkStatus({ email, setResult });
+  const handleCheckStatus = async () => {
+    const fetchedResult = await checkStatus({ email });
+    setResult(fetchedResult);
+
     setIsResultShown(true);
     setIsScreenDimmed(true);
   };
 
-  const handleProceed = () => {
-    checkStatus({ email, setResult });
+  const handleProceed = async () => {
+    const fetchedResult = await checkStatus({ email });
+    setResult(fetchedResult);
     if (
       fetchedResult.errors === null &&
       fetchedResult.verificationStatus === 1

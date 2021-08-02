@@ -37,8 +37,9 @@
 }
 
 .icon {
-    min-width: 20vw;
-    max-width: 25vw;
+    min-width: 10vw;
+    max-width: 12vw;
+    /* color: #ff4d4f; */
     color: #85a5ff;
 }
 

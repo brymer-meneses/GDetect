@@ -16,8 +16,6 @@ import { isResultShownState } from '../states/isResultShown';
 
 import { StopOutlined, CloudUploadOutlined } from '@ant-design/icons';
 
-import { useState } from 'react';
-
 function UploadForm() {
   const selfieImage = useRecoilValue(selfieImageState);
   const idImage = useRecoilValue(idImageState);
@@ -30,8 +28,6 @@ function UploadForm() {
   const setResult = useSetRecoilState(resultState);
   const setIsResultShown = useSetRecoilState(isResultShownState);
   const setIsRetryVerification = useSetRecoilState(isRetryVerificationState);
-
-  const [isUploadSuccess, setIsUploadSuccess] = useState(false);
 
   const uploadSuccess = {
     type: 'upload',
@@ -48,18 +44,17 @@ function UploadForm() {
     status: 'error',
     message: 'Something went upon uploading your information to the server.',
   };
-  const onUpload = () => {
-    fileUploadHandler({
+  const onUpload = async () => {
+    const isUploadSuccess = await fileUploadHandler({
       selfieImage,
       idImage,
       fullName,
       email,
       isRetryVerification,
-      setIsUploadSuccess,
     });
-    if (isUploadSuccess) {
+    if (isUploadSuccess === true) {
       setResult(uploadSuccess);
-    } else {
+    } else if (isUploadSuccess === false) {
       setResult(uploadFailed);
     }
     setCurrentStep(2);

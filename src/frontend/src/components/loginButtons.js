@@ -26,7 +26,12 @@ function LoginButtons() {
 
   const handleCheckStatus = async () => {
     if (!validateEmail(email)) {
-      notification.error({ message: 'Invalid Email', duration: 1 });
+      notification.error({
+        message: 'Invalid Email',
+        description:
+          'Please make sure that your email is in the form of example@mail.com',
+        duration: 1,
+      });
       return;
     }
     const fetchedResult = await checkStatus({ email });
@@ -38,7 +43,12 @@ function LoginButtons() {
 
   const handleProceed = async () => {
     if (!validateEmail(email)) {
-      notification.error({ message: 'Invalid Email', duration: 1 });
+      notification.error({
+        message: 'Invalid Email',
+        description:
+          'Please make sure that your email is in the form of example@mail.com',
+        duration: 1,
+      });
       return;
     }
     const fetchedResult = await checkStatus({ email });

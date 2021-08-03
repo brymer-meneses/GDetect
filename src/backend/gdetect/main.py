@@ -29,8 +29,6 @@ def process_information(
     email_address: str,
     retry_verification: bool,
 ):
-    # For Debugging
-    # retry_verification = True
 
     task = _init_task(
         email=email_address, full_name=full_name, retry_verification=retry_verification

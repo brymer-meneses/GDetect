@@ -5,7 +5,6 @@ METRICS = ["cosine", "euclidean"]
 CONFIG = {
     # Guards
     "face_detection": {"enabled": True},
-    # FIX: ID Info Validation doesn't work properly
     "info_validation": {"enabled": True, "use_gpu": False, "lang_list": ["en"]},
     # Core
     "facial_similarity_detection": {
@@ -20,7 +19,6 @@ CONFIG = {
         "model": MODELS[1],
         "metric": METRICS[0],
     },
-    # TODO: implement id type validation
     "id_validation": {
         "enabled": True,
         "tolerance": 0.10,
@@ -41,6 +39,6 @@ CONFIG = {
         7: "A similar facial structure has been found in the database.",
     },
     "system": {
-        "enabled": False,
+        "enabled": True,
     },
 }

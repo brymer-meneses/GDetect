@@ -1,4 +1,4 @@
-import { Button } from 'antd';
+import { Button, notification } from 'antd';
 
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import checkStatus from '../utils/checkStatus';
@@ -9,6 +9,8 @@ import { isOnUploadPageState } from '../states/isOnUploadPage';
 import { currentStepState } from '../states/currentStep';
 import { isResultShownState } from '../states/isResultShown';
 import { isScreenDimmedState } from '../states/isScreenDimmed';
+
+import validateEmail from '../utils/validateEmail';
 
 function LoginButtons() {
   const email = useRecoilValue(emailState);
@@ -23,6 +25,10 @@ function LoginButtons() {
   const isCheckStatusButtonDisabled = email === '';
 
   const handleCheckStatus = async () => {
+    if (!validateEmail(email)) {
+      notification.error({ message: 'Invalid Email', duration: 1 });
+      return;
+    }
     const fetchedResult = await checkStatus({ email });
     setResult(fetchedResult);
 
@@ -31,6 +37,10 @@ function LoginButtons() {
   };
 
   const handleProceed = async () => {
+    if (!validateEmail(email)) {
+      notification.error({ message: 'Invalid Email', duration: 1 });
+      return;
+    }
     const fetchedResult = await checkStatus({ email });
     setResult(fetchedResult);
     if (

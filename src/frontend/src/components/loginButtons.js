@@ -30,7 +30,7 @@ function LoginButtons() {
         message: 'Invalid Email',
         description:
           'Please make sure that your email is in the form of example@mail.com',
-        duration: 1,
+        duration: 3,
       });
       return;
     }
@@ -47,7 +47,7 @@ function LoginButtons() {
         message: 'Invalid Email',
         description:
           'Please make sure that your email is in the form of example@mail.com',
-        duration: 1,
+        duration: 3,
       });
       return;
     }

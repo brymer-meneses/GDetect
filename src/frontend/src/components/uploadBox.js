@@ -4,7 +4,11 @@ import '../styles/uploadBox.css';
 import { useSetRecoilState } from 'recoil';
 import { selfieImageState, idImageState } from '../states/images';
 
-import { faPortrait, faIdCard } from '@fortawesome/free-solid-svg-icons';
+import {
+  faPortrait,
+  faIdCard,
+  faWindowClose,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function UploadBox(props) {
@@ -80,10 +84,11 @@ function UploadBox(props) {
         ) : (
           <>
             <img src={imagePreview} alt="preview" />
-            <i
-              class="fas fa-window-close delete-button"
+            <FontAwesomeIcon
+              icon={faWindowClose}
+              class="delete-button"
               onClick={handleDelete}
-            ></i>
+            ></FontAwesomeIcon>
           </>
         )}
       </div>

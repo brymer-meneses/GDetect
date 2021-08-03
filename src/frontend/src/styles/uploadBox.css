@@ -1,8 +1,7 @@
 
 
 .upload-box {
-    border: 2px #1890ff;
-    border-style: dashed;
+    /* border: 2px #1890ff; */
     position: relative;
     background: #e6f7ff;
     height: 40vw;
@@ -18,6 +17,7 @@
     justify-content: center;
     border-radius: 1rem;
     margin: 1vh;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .upload-box > img {
@@ -31,16 +31,16 @@
     top: 2%;
     right: 2%;
     color: #ff4d4f;
-    font-size: 2rem;
+    max-width: 2rem;
     cursor: pointer;
-    text-shadow: 1px -1px 1px #595959;
+    filter:  drop-shadow(0px 8px 24px rgba(149, 157, 165, 7));
 }
 
 .icon {
-    min-width: 10vw;
-    max-width: 12vw;
-    /* color: #ff4d4f; */
+    min-width: 10vh;
+    max-width: 12vh;
     color: #85a5ff;
+    filter:  drop-shadow(0px 8px 24px rgba(149, 157, 165, 0.2));
 }
 
 .upload-box-contents {

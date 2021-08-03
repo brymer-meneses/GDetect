@@ -98,11 +98,15 @@ function ResultUpload() {
       };
   }
 
+  const additionalStyling =
+    fetchedResult.errors === null || fetchedResult.verificationStatus === 0
+      ? 'small'
+      : '';
   return (
     <>
       {isResultShown ? (
         <div className="result-container">
-          <div className="result-content">
+          <div className={`result-content ${additionalStyling}`}>
             <ResultComponent
               className="result"
               title={fetchedResult.title}

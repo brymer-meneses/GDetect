@@ -1,0 +1,23 @@
+.logo {
+    max-width: 4rem;
+    padding: 10px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    /* background: #e6f7ff; */
+    position: relative;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    z-index: 10;
+}
+
+.title {
+    margin-right: 4px;
+    font-size: 1rem;
+}
+
+.subtitle {
+    margin-left: 4px;
+    /* font-size: 0.8rem; */
+}

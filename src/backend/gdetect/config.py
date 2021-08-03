@@ -41,6 +41,6 @@ CONFIG = {
         7: "A similar facial structure has been found in the database.",
     },
     "system": {
-        "enabled": True,
+        "enabled": False,
     },
 }

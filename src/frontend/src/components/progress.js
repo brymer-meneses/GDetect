@@ -11,7 +11,10 @@ function Progress() {
   const { width } = useWindowSize();
   const currentStep = useRecoilValue(currentStepState);
   return (
-    <div className="progress-container" style={{ alignItems: 'center' }}>
+    <div
+      className="progress-container"
+      style={{ alignItems: 'center', background: 'white' }}
+    >
       <Steps
         current={currentStep}
         direction={width < 800 ? 'vertical' : 'horizontal'}

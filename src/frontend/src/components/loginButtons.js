@@ -48,6 +48,9 @@ function LoginButtons() {
   return (
     <>
       <Button
+        style={{
+          borderRadius: '0.3rem',
+        }}
         type="primary"
         disabled={isProceedButtonDisabled}
         className="upload-button"
@@ -57,6 +60,9 @@ function LoginButtons() {
       </Button>
       Recently Applied for Verification?
       <Button
+        style={{
+          borderRadius: '0.3rem',
+        }}
         type="secondary"
         disabled={isCheckStatusButtonDisabled}
         className="upload-button"

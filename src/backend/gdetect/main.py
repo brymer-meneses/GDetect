@@ -81,7 +81,6 @@ def _init_task(
     try:
         if not retry_verification:
             task = Task(email=email)
-
             session.add(task)
         else:
             task = session.query(Task).filter(Task.email == email).one_or_none()
@@ -89,10 +88,14 @@ def _init_task(
                 logger.warning(
                     f"Retry Verification is set to True but the email: {email} was not found in the database."
                 )
+            elif task.verification_status == 0:
+                logger.warning(
+                    f"The account linked for the email {email} is already verified. Overwriting is not allowed in this case."
+                )
+                return None
             else:
                 task.reset()
-
-        session.commit()
+                session.commit()
         return task
     except ValueError as err:
         logger.warning(err)

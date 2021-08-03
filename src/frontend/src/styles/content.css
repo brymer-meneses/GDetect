@@ -3,11 +3,14 @@
 .back-button {
     position: absolute;
     left: -1em;
+    top: 4rem;
     font-size: 1.2rem;
     padding: 0.5em;
     padding-left: 1.7em;
     cursor: pointer;
     border-radius: 0.3rem;
+    background: white;
+    z-index: 3;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
@@ -17,5 +20,6 @@
     align-content: space-between;
     align-items: center;
     z-index: 2;
+    background: #e6f7ff;
 }
 

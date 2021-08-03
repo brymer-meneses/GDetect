@@ -10,6 +10,7 @@
 
 .upload-button {
     margin: 1em;
+    min-width: 10vw;
 }
 
 

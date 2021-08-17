@@ -27,14 +27,14 @@ class InfoValidation(BaseMethod):
             logger.info("[ Started ]: Validating ID Information")
             reader = easyocr.Reader(self._lang_list, self._use_gpu)
             data = reader.readtext(id_img)
-            print(data)
+            # print(data)
             detected_texts = [text[-2] for text in data]
-            logger.debug(f"detected texts: {detected_texts}")
+            # logger.debug(f"detected texts: {detected_texts}")
 
             passed_info_validation = False
             for detected_text in detected_texts:
-                if text in detected_text:
-                    logger.debug(f"text: {text}")
+                if text.lower() in detected_text.lower():
+                    # logger.debug(f"text: {text}")
                     logger.debug(f"found match of {text} -> {detected_text}")
                     passed_info_validation = True
 

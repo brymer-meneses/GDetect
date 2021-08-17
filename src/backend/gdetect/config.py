@@ -9,13 +9,13 @@ CONFIG = {
     # Core
     "facial_similarity_detection": {
         "enabled": True,
-        "tolerance": 0.40,
+        "tolerance": 0.50,
         "model": MODELS[1],
         "metric": METRICS[0],
     },
     "database_checking": {
         "enabled": True,
-        "tolerance": 0.40,
+        "tolerance": 0.50,
         "model": MODELS[1],
         "metric": METRICS[0],
     },

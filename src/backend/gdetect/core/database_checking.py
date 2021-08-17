@@ -57,13 +57,13 @@ class DatabaseChecking(BaseMethod):
 
             distances.sort(reverse=False)
             top = distances[0]
-            logger.debug(f"Distances: {distances}")
+            # logger.debug(f"Distances: {distances}")
             logger.debug(f"Top Distance: {top}")
 
             passed_database_checking = top > self._tolerance
             if passed_database_checking:
                 logger.info(
-                    "[ Success ]: Similar facial structure has not been found in the database"
+                    "[ Success ]: No similar facial structure has been found in the database"
                 )
                 self.success = True
             else:

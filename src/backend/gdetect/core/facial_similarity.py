@@ -31,7 +31,7 @@ class FacialSimilarity(BaseMethod):
                     model_name=self._model_name,
                 )
                 distance = result["distance"]
-                logger.debug(f"Similarity: {distance}")
+                logger.debug(f"Facial Disparity: {distance} (lower is better)")
                 passed_facial_similarity = distance < self._tolerance
             except ValueError:
                 passed_facial_similarity = None
